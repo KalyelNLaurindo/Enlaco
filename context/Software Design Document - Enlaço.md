@@ -15,7 +15,7 @@ Locked during stakeholder interview — every ADR below traces back to one of th
 |---|---|
 | **ASM-01** | Backend: Python + FastAPI (RESTful). Frontend: React + Vite, SPA, installable PWA. Architecture style: DDD + OOP on the backend domain layer; TDD throughout. |
 | **ASM-02** | Persistence: **no relational/NoSQL database.** Each draw is a JSON file on disk, written atomically (`.tmp` + OS rename), with a TTL-based expiration/cleanup (survives process restarts — critical, since reveals happen asynchronously over days). |
-| **ASM-03** | Repos: **multirepo** (`enlaco-frontend`, `enlaco-backend`), each independently Dockerized. |
+| **ASM-03** | Repos: **multirepo** (Frontend: `02-frontend/Enlaço`, Backend: `03-backend/Enlaço`), each independently Dockerized. |
 | **ASM-04** | Delivery channels: extensible, config-driven. Default = email (custom HTML template). Optional = WhatsApp via pre-filled `wa.me` deep link (zero-cost, no Business API approval needed) and QR code. Channel abstraction must allow a real WhatsApp Business API key to be plugged in later without redesign. |
 | **ASM-05** | Packaging: PWA install covers mobile+desktop "add to home screen" out of the box. **Electron** adds a true desktop app (.exe/.dmg/AppImage). **Capacitor** adds a true installable Android APK (and iOS, tooling permitting) from the same React codebase. |
 | **ASM-06** | Testing: **100% pytest coverage on the backend** (domain + API layers — this is where correctness-critical logic lives). Frontend: Vitest + Testing Library on critical flows only (wizard, reveal), no 100% mandate. |
@@ -837,7 +837,7 @@ All mutating endpoints validate `effective_status()` (ADR-03) before acting and 
 ### 3.2 Folder Structure
 
 ```
-enlaco-frontend/
+02-frontend/Enlaço/
 ├── src/
 │   ├── app/                    # routing, providers (QueryClient, Zustand store init)
 │   ├── features/
@@ -880,7 +880,7 @@ enlaco-frontend/
 **ADR-13 — Electron wraps the hosted web build; it does not embed the Python backend.**
 *Decision:* the Electron shell (`packaging/electron/`) loads the production SPA build and talks to the deployed backend over HTTPS (`VITE_API_URL` baked in at build time) — it is a native chrome-less window around the same web app, not an offline-capable bundled full-stack app.
 *Justification:* bundling a Python interpreter + FastAPI inside Electron to achieve full offline capability is a materially different (and much larger) project than what was scoped — Enlaço's core value (multi-party private delivery) inherently requires a reachable backend anyway, so offline-first desktop isn't a real requirement, just a packaging nicety. `electron-builder` produces `.exe` (NSIS installer), `.dmg`, and `.AppImage` from one config.
-*Lives in the frontend repo* (`enlaco-frontend/packaging/electron/`) — packaging is a frontend-delivery concern, not a reason to violate the ASM-03 multirepo split with a third repo.
+*Lives in the frontend repo* (`02-frontend/Enlaço/packaging/electron/`) — packaging is a frontend-delivery concern, not a reason to violate the ASM-03 multirepo split with a third repo.
 
 ### 4.2 Mobile — Capacitor
 
@@ -892,7 +892,7 @@ enlaco-frontend/
 
 ```
 ┌──────────────────────────────────────────┐
-│ enlaco-backend/                           │
+│ 03-backend/Enlaço/                       │
 ├──────────────────────────────────────────┤
 │ Dockerfile                                │
 │   FROM python:3.12-slim                   │
@@ -911,7 +911,7 @@ enlaco-frontend/
 └──────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────┐
-│ enlaco-frontend/                          │
+│ 02-frontend/Enlaço/                      │
 ├──────────────────────────────────────────┤
 │ Dockerfile                                │
 │   FROM node:20 AS build → vite build      │
@@ -939,7 +939,7 @@ Each repo is independently deployable (backend to any container host; frontend's
 
 *(Bounded Context: **Delivery Pipeline**. Final phase — closes the SDD.)*
 
-### 5.1 Backend Pipeline (`enlaco-backend/.github/workflows/ci.yml`)
+### 5.1 Backend Pipeline (`03-backend/Enlaço/.github/workflows/ci.yml`)
 
 ```
 on: [pull_request, push to main]
@@ -959,7 +959,7 @@ on: [schedule: cron '*/2 * * * *' via a separate sweep-cron.yml]
     (ADR-03 housekeeping + ADR-09 retry resumption)
 ```
 
-### 5.2 Frontend Pipeline (`enlaco-frontend/.github/workflows/ci.yml`)
+### 5.2 Frontend Pipeline (`02-frontend/Enlaço/.github/workflows/ci.yml`)
 
 ```
 on: [pull_request, push to main]
