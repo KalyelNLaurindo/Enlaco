@@ -12,7 +12,8 @@ describe('ParticipantsStep', () => {
   it('should render the name input and channel input fields', () => {
     render(<ParticipantsStep />);
     expect(screen.getByLabelText(/nome/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/canal/i)).toBeInTheDocument();
+    // The channel input is linked via htmlFor='participant-channel'
+    expect(screen.getByRole('textbox', { name: /canal/i })).toBeInTheDocument();
   });
 
   it('should show an empty state message when no participants exist', () => {
@@ -24,7 +25,7 @@ describe('ParticipantsStep', () => {
     render(<ParticipantsStep />);
 
     await userEvent.type(screen.getByLabelText(/nome/i), 'Carlos');
-    await userEvent.type(screen.getByLabelText(/canal/i), 'carlos@example.com');
+    await userEvent.type(screen.getByPlaceholderText(/email@exemplo.com/i), 'carlos@example.com');
     fireEvent.click(screen.getByRole('button', { name: /adicionar/i }));
 
     expect(useWizardStore.getState().participants).toHaveLength(1);
@@ -35,7 +36,7 @@ describe('ParticipantsStep', () => {
     render(<ParticipantsStep />);
 
     await userEvent.type(screen.getByLabelText(/nome/i), 'Ana');
-    await userEvent.type(screen.getByLabelText(/canal/i), 'ana@example.com');
+    await userEvent.type(screen.getByPlaceholderText(/email@exemplo.com/i), 'ana@example.com');
     fireEvent.click(screen.getByRole('button', { name: /adicionar/i }));
 
     expect(screen.getByText('Ana')).toBeInTheDocument();
@@ -45,11 +46,12 @@ describe('ParticipantsStep', () => {
     render(<ParticipantsStep />);
 
     await userEvent.type(screen.getByLabelText(/nome/i), 'Carlos');
-    await userEvent.type(screen.getByLabelText(/canal/i), 'carlos@example.com');
+    const channelInput = screen.getByPlaceholderText(/email@exemplo.com/i);
+    await userEvent.type(channelInput, 'carlos@example.com');
     fireEvent.click(screen.getByRole('button', { name: /adicionar/i }));
 
     expect(screen.getByLabelText(/nome/i)).toHaveValue('');
-    expect(screen.getByLabelText(/canal/i)).toHaveValue('');
+    expect(screen.getByPlaceholderText(/email@exemplo.com/i)).toHaveValue('');
   });
 
   it('should show an error if name is empty on add', async () => {
@@ -97,6 +99,8 @@ describe('ParticipantsStep', () => {
     useWizardStore.getState().addParticipant('A', [{ type: 'EMAIL', value: 'a@example.com' }]);
     useWizardStore.getState().addParticipant('B', [{ type: 'EMAIL', value: 'b@example.com' }]);
     useWizardStore.getState().addParticipant('C', [{ type: 'EMAIL', value: 'c@example.com' }]);
+    // Start from step 1 (the correct position for this step).
+    useWizardStore.setState({ currentStep: 1 });
     render(<ParticipantsStep />);
 
     fireEvent.click(screen.getByRole('button', { name: /próximo/i }));
