@@ -1,69 +1,43 @@
-# Enlaço — Private Gift Exchange Draw Engine
+# 🎁 Enlaço — Frontend Web Application
 
-![Status](https://img.shields.io/badge/status-in_development-blue.svg)
-![Stack](https://img.shields.io/badge/stack-React%20%2B%20Vite%20%2B%20TypeScript-61DAFB?logo=react)
-![License](https://img.shields.io/badge/license-MIT-green)
+Um sorteador de amigo secreto privado, totalmente responsivo, moderno e seguro. Desenvolvido em **React + TypeScript + Vite + Zustand** com suporte a Progressive Web App (PWA) e empacotamento nativo.
 
-> A constraint-aware gift exchange engine that delivers each participant's match **privately** — the organizer never sees the full mapping.
+## 🚀 Tecnologias
+- **React 18** (Vite + TypeScript)
+- **Zustand** (Estado reativo e persistente do Wizard)
+- **Vite PWA Plugin** (Instalação off-line e suporte mobile)
+- **Vitest & Testing Library** (Foco estrito em TDD)
+- **Vanilla CSS** (Fiel aos tokens e layout do Design Brief)
 
----
+## 📦 Instalação e Desenvolvimento
 
-## 📌 Status
+1. **Instalar dependências:**
+   ```bash
+   npm install
+   ```
 
-**In development phase.** Scaffolding is complete, and domain validation schemas are fully implemented and verified via TDD.
+2. **Iniciar servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
 
----
+3. **Rodar suíte de testes (TDD/Vitest):**
+   ```bash
+   npm run test
+   ```
 
-## 🎯 The Problem
+4. **Compilar para produção (Production Build):**
+   ```bash
+   npm run build
+   ```
 
-Every existing Secret Santa solution forces a tradeoff: whoever organizes the draw ends up knowing everyone's pairing and can't fully participate. Paper slips, generic websites, and chat bots all share the same structural flaw — they conflate **draw generation** (an algorithm problem) with **private result delivery** (a distribution problem) into one step or one device.
+## 📂 Estrutura do Código
 
-**Enlaço separates them.**
+- `src/domain/types/`: Definições puras de contratos e entidades do domínio.
+- `src/validation/schemas/`: Esquemas Zod para validações de participantes e regras de exclusão.
+- `src/features/wizard/`: Passos estruturados do fluxo de criação do sorteio (Step 0 a 3).
+- `src/features/reveal/`: Mecanismo privado e seguro de revelação de resultados (Tap-to-Reveal).
+- `src/test/`: Infraestrutura e utilitários de testes.
 
----
-
-## 📄 Project Documentation
-
-| Document | Purpose |
-|---|---|
-| [Problem Discovery](context/Problem%20Discovery%20-%20Enlaço.md) | Root cause analysis, stakeholder interviews, JTBD framework |
-| [Requirements Specification](context/Requirements%20Specification%20-%20Enlaço.md) | Functional requirements, MoSCoW prioritization |
-| [Software Design Document](context/Software%20Design%20Document%20-%20Enlaço.md) | Solution architecture, data schemas, API contracts |
-| [Design Brief](context/Design%20Brief%20-%20Enlaço.md) | Visual design direction, UX principles |
-| [Implementation Flow](context/Implementation%20Flow%20-%20Enlaço.md) | Execution roadmap and TDD specifications |
-
----
-
-## 🛠️ Getting Started
-
-### Prerequisites
-- Node.js v20.11.0 or higher
-- npm v10.2.4 or higher
-
-### Installation
-Install project dependencies:
-```bash
-npm install
-```
-
-### Running Tests (TDD)
-Execute the Vitest test suite:
-```bash
-npm run test
-```
-
-### Running Development Server
-Start the Vite development server:
-```bash
-npm run dev
-```
-
----
-
-## 👤 Author
-
-**Kalyel N. Laurindo / Software Engineer**
-[GitHub](https://github.com/KalyelNLaurindo) · [LinkedIn](https://www.linkedin.com/in/kalyel-n-laurindo/)
-
-***
-**Autoria/Assinatura:** Kalyel N. Laurindo / Software Engineer
+## 🛡️ Licença
+Este projeto está sob a licença [MIT](LICENSE).
