@@ -71,7 +71,7 @@ describe('ParticipantsStep', () => {
     useWizardStore.getState().addParticipant('Carlos', [{ type: 'EMAIL', value: 'carlos@example.com' }]);
     render(<ParticipantsStep />);
 
-    const chip = screen.getByText('Carlos').closest('[data-testid="participant-chip"]')!;
+    const chip = screen.getByText('Carlos').closest('[data-testid="participant-chip"]') as HTMLElement;
     fireEvent.click(within(chip).getByRole('button', { name: /remover/i }));
 
     expect(useWizardStore.getState().participants).toHaveLength(0);
