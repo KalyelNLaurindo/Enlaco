@@ -1,0 +1,189 @@
+/* =====================================================
+   RevealCard — Tap-to-Reveal Gift Exchange Component
+   Design tokens from: context/Design Brief - Enlaço.md
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Nunito:wght@400;600&display=swap');
+
+.reveal-card {
+  /* === Design Brief Tokens === */
+  --bg-base:          #0F0F12;
+  --bg-surface:       #18181D;
+  --bg-surface-raised:#212127;
+  --border-default:   #2C2C34;
+  --text-primary:     #F5F5F7;
+  --text-secondary:   #A3A3AE;
+  --text-disabled:    #5C5C66;
+  --accent:           #FF2E93;
+  --accent-hover:     #FF57AA;
+  --accent-pressed:   #D6167A;
+  --success:          #2FE6B0;
+  --warning:          #FFC857;
+  --error:            #FF5C5C;
+
+  /* === Shape & Spacing === */
+  --radius-sm:  12px;
+  --radius-md:  20px;
+  --radius-pill: 9999px;
+
+  font-family: 'Nunito', system-ui, sans-serif;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 48px 32px;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+
+  /* Flat design — border-only separation (no decorative glow/shadow) */
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* --- Header --- */
+.reveal-card__header {
+  text-align: center;
+}
+
+.reveal-card__label {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 8px;
+}
+
+.reveal-card__event-name {
+  font-family: 'Quicksand', system-ui, sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* --- Body --- */
+.reveal-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* --- Masked state --- */
+.reveal-card__masked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+
+.reveal-card__mask {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.reveal-card__mask-glyph {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Quicksand', system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-disabled);
+  animation: reveal-card-pulse 2s ease-in-out infinite;
+}
+
+.reveal-card__mask-glyph:nth-child(2) { animation-delay: 0.2s; }
+.reveal-card__mask-glyph:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes reveal-card-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+/* CTA Button — pill shape per Design Brief */
+.reveal-card__cta {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 14px 40px;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  /* Min touch target 44×44px per Design Brief §05 */
+  min-height: 44px;
+  transition: background 0.15s ease;
+  width: 100%;
+  max-width: 280px;
+}
+
+.reveal-card__cta:hover  { background: var(--accent-hover); }
+.reveal-card__cta:active { background: var(--accent-pressed); }
+
+/* --- Revealed state --- */
+.reveal-card__result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  animation: reveal-card-fade-up 0.3s ease;
+  width: 100%;
+}
+
+@keyframes reveal-card-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-card__you-got {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.reveal-card__recipient {
+  font-family: 'Quicksand', system-ui, sans-serif;
+  font-size: 39px;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+/* Organizer message */
+.reveal-card__message {
+  margin: 16px 0 0;
+  padding: 16px 20px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.6;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
