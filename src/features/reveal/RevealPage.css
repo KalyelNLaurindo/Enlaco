@@ -1,0 +1,11 @@
+/* RevealPage — full-bleed participant reveal layout */
+
+.reveal-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: var(--bg-base);
+  /* No nav chrome — Design Brief §03 */
+}
