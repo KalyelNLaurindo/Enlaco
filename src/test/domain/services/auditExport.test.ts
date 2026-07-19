@@ -19,13 +19,13 @@ describe('Audit Export Utilities', () => {
         displayName: 'Alice', 
         channels: [{ type: 'EMAIL', value: 'alice@test.com' }], 
         revealUrl: '/r/' + encodeRevealToken('Alice', 'Bob', { eventName: 'Natal Família 2026' })
-      } as any,
+      },
       { 
         id: 'p2', 
         displayName: 'Bob', 
         channels: [{ type: 'WHATSAPP_LINK', value: '11999999999' }], 
         revealUrl: '/r/' + encodeRevealToken('Bob', 'Alice', { eventName: 'Natal Família 2026' })
-      } as any,
+      },
     ],
     exclusionRules: [],
   };

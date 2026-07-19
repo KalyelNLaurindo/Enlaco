@@ -31,7 +31,7 @@ export function generateCSVContent(
     if (draw.organizerBlind && !isUnlocked) {
       matchText = '🙈 OCULTO (MODO CEGO)';
     } else if (!draw.auditPin || isUnlocked) {
-      matchText = getTargetName((p as any).revealUrl);
+      matchText = getTargetName(p.revealUrl);
     }
 
     const row = [
@@ -111,7 +111,7 @@ export function generateASCIICoupon(
     lines.push(formatLine('🔒 BLOQUEADO: DIGITE O PIN DE AUDITORIA'));
   } else {
     draw.participants.forEach((p) => {
-      const target = getTargetName((p as any).revealUrl);
+      const target = getTargetName(p.revealUrl);
       const lineText = `* ${p.displayName.substring(0, 12).padEnd(12)} ======>  ${target.substring(0, 12)}`;
       lines.push(formatLine(lineText));
     });

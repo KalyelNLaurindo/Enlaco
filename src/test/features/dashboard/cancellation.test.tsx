@@ -66,13 +66,13 @@ describe('OrganizerDashboard - Cancellation & PIN Protection', () => {
           displayName: 'Alice', 
           channels: [{ type: 'EMAIL', value: 'a@a.com' }],
           revealUrl: '/r/eyJnIjoiQWxpY2UiLCJyIjoiQm9iIiwiZSI6IkNodXJyYXNjbyAyMDI2IiwiaWQiOiJkcmF3LWFiYyIsInAiOiJwMSJ9' // Alice drew Bob
-        } as any,
+        },
         { 
           id: 'p2', 
           displayName: 'Bob', 
           channels: [{ type: 'EMAIL', value: 'b@b.com' }],
           revealUrl: '/r/eyJnIjoiQm9iIiwiciI6IkFsaWNlIiwiZSI6IkNodXJyYXNjbyAyMDI2IiwiaWQiOiJkcmF3LWFiYyIsInAiOiJwMiJ9' // Bob drew Alice
-        } as any,
+        },
       ]
     };
 

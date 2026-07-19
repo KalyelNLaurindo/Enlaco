@@ -6,3 +6,7 @@ CLAUDE.md
 claude.md
 .DS_Store
 Thumbs.db
+
+# Python caches
+*.pyc
+__pycache__/

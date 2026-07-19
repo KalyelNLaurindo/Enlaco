@@ -355,7 +355,7 @@ export function OrganizerDashboard() {
                 {participants.map((p, idx) => {
                   const isRevealed = !!revealedStatus[p.id];
                   const revealTime = revealedStatus[p.id];
-                  const revealUrl = (p as any).revealUrl || '';
+                  const revealUrl = p.revealUrl || '';
   
                   return (
                     <tr key={p.id} className="dashboard-table__row">

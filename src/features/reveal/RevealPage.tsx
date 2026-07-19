@@ -63,7 +63,7 @@ export function RevealPage() {
         />
       </div>
     );
-  } catch (err) {
+  } catch {
     return <RevealError message={t('invalidTokenError')} />;
   }
 }

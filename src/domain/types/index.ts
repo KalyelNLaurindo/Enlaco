@@ -12,6 +12,7 @@ export interface Participant {
   id: string;
   displayName: string;
   channels: DeliveryChannel[];
+  revealUrl?: string;
 }
 
 // Prevents two participants from drawing each other. This is bidirectional.

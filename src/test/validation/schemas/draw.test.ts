@@ -133,7 +133,7 @@ describe('Draw Wizard Schema Validation', () => {
   it('should require eventName in eventDetails', () => {
     // A name is mandatory to give context to the participants.
     const data = getValidWizardData();
-    (data.eventDetails as any).eventName = '';
+    data.eventDetails.eventName = '';
     const result = drawWizardSchema.safeParse(data);
     expect(result.success).toBe(false);
   });
