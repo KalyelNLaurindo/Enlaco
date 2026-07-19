@@ -2,26 +2,23 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { WizardPage } from './features/wizard/WizardPage';
 import { RevealPage } from './features/reveal/RevealPage';
 import { OrganizerDashboard } from './features/dashboard/OrganizerDashboard';
+import { I18nProvider } from './domain/services/i18nService';
 import './index.css';
 
-/**
- * Root application router.
- * Sitemap per Design Brief §01:
- *   /        → redirect to /criar (landing page placeholder)
- *   /criar   → Draw Creation Wizard (WizardPage)
- *   /r/:token → Participant Reveal (RevealPage)
- */
+// Roteador principal do aplicativo. Mapeia as rotas públicas de criação, revelação e painel.
 function App() {
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/criar" replace />} />
-        <Route path="/criar" element={<WizardPage />} />
-        <Route path="/r/:resultToken" element={<RevealPage />} />
-        <Route path="/sorteio/:drawId" element={<OrganizerDashboard />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </HashRouter>
+    <I18nProvider>
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/criar" replace />} />
+          <Route path="/criar" element={<WizardPage />} />
+          <Route path="/r/:resultToken" element={<RevealPage />} />
+          <Route path="/sorteio/:drawId" element={<OrganizerDashboard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </HashRouter>
+    </I18nProvider>
   );
 }
 

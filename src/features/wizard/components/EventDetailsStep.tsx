@@ -1,28 +1,29 @@
 import { useState } from 'react';
 import { useWizardStore } from '../store/wizardStore';
+import { useTranslation } from '../../../domain/services/i18nService';
 
 interface FieldErrors {
   eventName?: string;
 }
 
-/**
- * Wizard Step 0 — Event Details.
- * Collects event name (required ≤100 chars), date, suggested value,
- * and organizer message (optional ≤500 chars). Binds directly to wizardStore.
- */
+// Formulário da Etapa 1 — Detalhes do Evento.
+// Coleta o nome (obrigatório), data, orçamento e mensagem aos participantes.
 export function EventDetailsStep() {
+  const { t } = useTranslation();
   const { eventDetails, setEventDetails, nextStep } = useWizardStore();
   const [errors, setErrors] = useState<FieldErrors>({});
 
+  // Valida se o campo obrigatório de nome do evento foi preenchido.
   function validate(): boolean {
     const newErrors: FieldErrors = {};
     if (!eventDetails.eventName.trim()) {
-      newErrors.eventName = 'Nome do evento é obrigatório.';
+      newErrors.eventName = t('eventNameRequiredError');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
+  // Avança para a próxima etapa caso o formulário seja válido.
   function handleNext() {
     if (validate()) {
       nextStep();
@@ -33,24 +34,24 @@ export function EventDetailsStep() {
     <section className="wizard-step" aria-labelledby="event-details-title">
       <header className="wizard-step__header">
         <h2 className="wizard-step__title" id="event-details-title">
-          Detalhes do evento
+          {t('stepDetails')}
         </h2>
         <p className="wizard-step__subtitle">
-          Essas informações serão exibidas na tela de revelação de cada participante.
+          {t('eventDetailsSub')}
         </p>
       </header>
 
       <div className="field-group">
-        {/* Event Name — required */}
+        {/* Nome do Evento (Campo Obrigatório) */}
         <div>
           <label className="field-label" htmlFor="event-name">
-            Nome do evento
+            {t('eventNameLabel')}
           </label>
           <input
             id="event-name"
             type="text"
             className={`field-input${errors.eventName ? ' is-error' : ''}`}
-            placeholder="Ex: Amigo Secreto 2026"
+            placeholder={t('eventNamePlaceholder')}
             maxLength={100}
             value={eventDetails.eventName}
             onChange={(e) => setEventDetails({ eventName: e.target.value })}
@@ -64,10 +65,10 @@ export function EventDetailsStep() {
           )}
         </div>
 
-        {/* Event Date — optional */}
+        {/* Data do Evento (Opcional) */}
         <div>
           <label className="field-label" htmlFor="event-date">
-            Data do evento
+            {t('eventDateLabel')}
           </label>
           <input
             id="event-date"
@@ -78,30 +79,30 @@ export function EventDetailsStep() {
           />
         </div>
 
-        {/* Suggested Value — optional */}
+        {/* Valor Sugerido / Orçamento (Opcional) */}
         <div>
           <label className="field-label" htmlFor="suggested-value">
-            Valor sugerido
+            {t('suggestedValueLabel')}
           </label>
           <input
             id="suggested-value"
             type="text"
             className="field-input"
-            placeholder="Ex: R$ 50,00"
+            placeholder={t('suggestedValuePlaceholder')}
             value={eventDetails.suggestedValue ?? ''}
             onChange={(e) => setEventDetails({ suggestedValue: e.target.value })}
           />
         </div>
 
-        {/* Organizer Message — optional, max 500 chars */}
+        {/* Mensagem Opcional do Organizador para Exibição */}
         <div>
           <label className="field-label" htmlFor="organizer-message">
-            Mensagem do organizador
+            {t('messageLabel')}
           </label>
           <textarea
             id="organizer-message"
             className="field-textarea"
-            placeholder="Uma mensagem especial para os participantes..."
+            placeholder={t('messagePlaceholder')}
             maxLength={500}
             value={eventDetails.organizerMessage ?? ''}
             onChange={(e) => setEventDetails({ organizerMessage: e.target.value })}
@@ -111,7 +112,7 @@ export function EventDetailsStep() {
 
       <div className="wizard-step__actions">
         <button className="btn-primary" onClick={handleNext}>
-          Próximo
+          {t('nextBtn')}
         </button>
       </div>
     </section>

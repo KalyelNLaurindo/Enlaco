@@ -3,17 +3,15 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { decodeRevealToken } from '../../domain/services/tokenService';
 import { useWizardStore } from '../wizard/store/wizardStore';
 import { generateCSVContent, generateASCIICoupon } from './auditExportUtils';
+import { useTranslation } from '../../domain/services/i18nService';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import type { Draw } from '../../domain/types';
 import './OrganizerDashboard.css';
 
-/**
- * Organizer Dashboard Component.
- * Enables group coordinators to monitor draw delivery status,
- * copy individual reveal URLs for each participant, and view matches
- * (if blind mode is inactive). Uses localStorage storage events to sync
- * read/reveal statuses in real-time between tabs/devices.
- */
+// Organizer Dashboard component.
+// Allows coordinators to track reveal statuses, manage PIN locks, duplicate drafts, or cancel draws.
 export function OrganizerDashboard() {
+  const { t } = useTranslation();
   const { drawId } = useParams<{ drawId: string }>();
   const navigate = useNavigate();
   const [draw, setDraw] = useState<Draw | null>(null);
@@ -26,6 +24,7 @@ export function OrganizerDashboard() {
   const [showAsciiModal, setShowAsciiModal] = useState(false);
   const [couponCopied, setCouponCopied] = useState(false);
 
+  // Triggers browser download of the audit data formatted in a CSV file.
   const handleExportCSV = () => {
     if (!draw) return;
     const csvContent = generateCSVContent(draw, revealedStatus, isPinUnlocked);
@@ -33,13 +32,14 @@ export function OrganizerDashboard() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `auditoria-sorteio-${drawId}.csv`);
+    link.setAttribute('download', `audit-draw-${drawId}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
+  // Copies the generated ASCII receipt coupon to the device clipboard.
   const handleCopyCoupon = async () => {
     if (!draw) return;
     const coupon = generateASCIICoupon(draw, revealedStatus, isPinUnlocked);
@@ -52,7 +52,7 @@ export function OrganizerDashboard() {
     }
   };
 
-  // Load draw configuration from localStorage and read initial reveal statuses
+  // Loads the draw details and claim timestamps from local storage.
   useEffect(() => {
     if (!drawId) return;
 
@@ -62,7 +62,6 @@ export function OrganizerDashboard() {
         const parsedDraw = JSON.parse(storedData) as Draw;
         setDraw(parsedDraw);
 
-        // Scan localStorage for any existing claim/reveal timestamps for this draw
         const statuses: Record<string, string> = {};
         parsedDraw.participants.forEach((p) => {
           const timestamp = localStorage.getItem(`enlaco_revealed_${drawId}_${p.id}`);
@@ -72,12 +71,12 @@ export function OrganizerDashboard() {
         });
         setRevealedStatus(statuses);
       } catch (err) {
-        console.error('Failed to parse stored draw details', err);
+        console.error('Failed to parse draw details', err);
       }
     }
   }, [drawId]);
 
-  // Listen for storage events in other tabs to update reveal statuses in real-time
+  // Listens to global storage events to sync claimed statuses in real-time.
   useEffect(() => {
     if (!drawId) return;
 
@@ -113,20 +112,19 @@ export function OrganizerDashboard() {
 
   const { eventDetails, organizerBlind, participants } = draw;
 
-  // Copies reveal link to clipboard
+  // Copies the unique reveal link for a participant.
   const handleCopyLink = async (url: string, index: number) => {
-    // Generate full URL (handling absolute paths dynamically)
     const fullUrl = `${window.location.origin}${window.location.pathname}${url}`;
     try {
       await navigator.clipboard.writeText(fullUrl);
       setCopiedIndex(index);
       setTimeout(() => setCopiedIndex(null), 2000);
     } catch (err) {
-      console.error('Failed to copy to clipboard', err);
+      console.error('Failed to copy link', err);
     }
   };
 
-  // Helper to generate custom deep links for WhatsApp messages
+  // Generates a customized WhatsApp shareable link.
   const getWhatsAppLink = (phoneNumber: string, revealUrl: string) => {
     const fullUrl = `${window.location.origin}${window.location.pathname}${revealUrl}`;
     const message = `Olá! O sorteio do Amigo Secreto "${eventDetails.eventName}" foi realizado 🎉. Veja quem você tirou abrindo este link privado: ${fullUrl}`;
@@ -134,22 +132,22 @@ export function OrganizerDashboard() {
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
   };
 
-  // Helper to decode target name if organizer is not in blind mode
+  // Resolves the secret partner name if the PIN is unlocked.
   const getTargetName = (revealUrl?: string): string => {
-    if (!revealUrl) return 'Desconhecido';
+    if (!revealUrl) return 'Unknown';
     try {
       const token = revealUrl.split('/').pop() || '';
       const decoded = decodeRevealToken(token);
       return decoded.receiverName;
     } catch {
-      return 'Erro ao decodificar';
+      return 'Decode Error';
     }
   };
 
+  // Extends the draw link validity to 90 days.
   const handleSaveDraw = () => {
     if (!drawId || !draw) return;
     
-    // Extend expiration to 90 days from now
     const extendedDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
     const updatedDraw: Draw = {
       ...draw,
@@ -160,10 +158,10 @@ export function OrganizerDashboard() {
     setDraw(updatedDraw);
   };
 
+  // Re-populates the wizard with the draw configuration to start a new draft.
   const handleDuplicate = () => {
     if (!draw) return;
     
-    // Populate the store directly keeping the same IDs for exclusion rules integrity
     useWizardStore.setState({
       currentStep: 0,
       participants: draw.participants.map((p) => ({
@@ -190,14 +188,17 @@ export function OrganizerDashboard() {
   return (
     <div className="dashboard-page">
       <main className="dashboard-card">
-        {/* Header Section */}
+        {/* Header section with event details and dashboard controls */}
         <header className="dashboard-card__header">
-          <p className="dashboard-card__subtitle">Painel do Organizador</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <p className="dashboard-card__subtitle" style={{ margin: 0 }}>{t('dashboardTitle')}</p>
+            <LanguageSwitcher />
+          </div>
           <h1 className="dashboard-card__title">{eventDetails.eventName}</h1>
           <div className="dashboard-card__meta">
             {eventDetails.eventDate && (
               <span className="dashboard-card__meta-item">
-                📅 {new Date(eventDetails.eventDate).toLocaleDateString('pt-BR')}
+                📅 {new Date(eventDetails.eventDate).toLocaleDateString()}
               </span>
             )}
             {eventDetails.suggestedValue && (
@@ -221,23 +222,22 @@ export function OrganizerDashboard() {
                 textAlign: 'center' 
               }}
             >
-              🚫 SORTEIO CANCELADO: Os links de revelação foram invalidados.
+              {t('drawCancelledBanner')}
             </div>
           ) : organizerBlind ? (
             <div className="dashboard-card__banner dashboard-card__banner--blind">
-              👁️ <strong>Modo Cego Ativo:</strong> Você também está participando!
-              Os resultados individuais estão ocultos para preservar o mistério.
+              {t('blindModeBanner')}
             </div>
           ) : (
             <div className="dashboard-card__banner dashboard-card__banner--non-blind">
-              🔓 <strong>Modo Aberto:</strong> Você pode visualizar os emparelhamentos abaixo.
+              {t('unlockedModeDesc')}
             </div>
           )}
 
-          {/* Expiration Banner */}
+          {/* Draw Link Validity Controls */}
           <div className="dashboard-card__expiration" style={{ marginTop: '1rem', padding: '0.75rem 1rem', borderRadius: '8px', backgroundColor: 'var(--color-bg-surface-raised, #212127)', border: '1px solid var(--color-border-default, #2C2C34)', fontSize: '13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>
-              ⏳ <strong>Validade dos links:</strong> {draw.tokenValidUntil ? new Date(draw.tokenValidUntil).toLocaleString('pt-BR') : '24 horas'}
+              ⏳ <strong>{t('validityLabel')}:</strong> {draw.tokenValidUntil ? new Date(draw.tokenValidUntil).toLocaleString() : t('hours24')}
             </span>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               {draw.status !== 'CANCELLED' && (
@@ -248,7 +248,7 @@ export function OrganizerDashboard() {
                       className="dashboard-btn dashboard-btn--secondary"
                       style={{ fontSize: '11px', padding: '0.35rem 0.7rem', margin: 0 }}
                     >
-                      Salvar Sorteio (90 dias)
+                      {t('saveDrawBtn')}
                     </button>
                   )}
                   <button 
@@ -256,7 +256,7 @@ export function OrganizerDashboard() {
                     className="dashboard-btn"
                     style={{ fontSize: '11px', padding: '0.35rem 0.7rem', margin: 0, backgroundColor: '#FF5C5C', color: '#FFF', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
                   >
-                    Cancelar Sorteio
+                    {t('cancelDrawBtn')}
                   </button>
                 </>
               )}
@@ -265,53 +265,53 @@ export function OrganizerDashboard() {
                 className="dashboard-btn dashboard-btn--secondary"
                 style={{ fontSize: '11px', padding: '0.35rem 0.7rem', margin: 0 }}
               >
-                Duplicar Rascunho
+                {t('duplicateBtn')}
               </button>
             </div>
           </div>
         </header>
 
-        {/* Organizer Message Section */}
+        {/* Organizer Custom Event Message */}
         {eventDetails.organizerMessage && (
           <section className="dashboard-card__message-box">
-            <h2 className="dashboard-card__section-title">Mensagem do Evento</h2>
+            <h2 className="dashboard-card__section-title">{t('messageLabel')}</h2>
             <p className="dashboard-card__message">{eventDetails.organizerMessage}</p>
           </section>
         )}
 
-        {/* Export and Audit Actions */}
+        {/* Export & Audit options */}
         <section className="dashboard-card__message-box" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <h2 className="dashboard-card__section-title" style={{ width: '100%', margin: 0 }}>📊 Auditoria & Exportação</h2>
+          <h2 className="dashboard-card__section-title" style={{ width: '100%', margin: 0 }}>{t('auditTitle')}</h2>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button 
               onClick={handleExportCSV}
               className="dashboard-btn dashboard-btn--secondary"
               style={{ margin: 0, padding: '0.5rem 1rem', fontSize: '13px' }}
             >
-              Exportar CSV
+              {t('exportCsvBtn')}
             </button>
             <button 
               onClick={() => setShowAsciiModal(true)}
               className="dashboard-btn dashboard-btn--secondary"
               style={{ margin: 0, padding: '0.5rem 1rem', fontSize: '13px' }}
             >
-              Visualizar Cupom ASCII
+              {t('viewAsciiBtn')}
             </button>
           </div>
         </section>
 
-        {/* Participants Table */}
+        {/* Participant Status Table */}
         <section className="dashboard-card__participants">
-          <h2 className="dashboard-card__section-title">Participantes ({participants.length})</h2>
+          <h2 className="dashboard-card__section-title">{t('participantsCount')} ({participants.length})</h2>
           
           {draw.auditPin && !isPinUnlocked && (
             <div className="dashboard-pin-unlock" style={{ margin: '1rem 0', padding: '1rem', backgroundColor: 'var(--color-bg-surface-raised, #212127)', border: '1px solid var(--color-border-default, #2C2C34)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
-              <label htmlFor="dashboard-pin" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>🔒 Este sorteio está protegido por PIN</label>
+              <label htmlFor="dashboard-pin" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>🔒 {t('pinProtectedLabel')}</label>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <input
                   id="dashboard-pin"
                   type="password"
-                  placeholder="Digite o PIN..."
+                  placeholder={t('pinInputPlaceholder')}
                   value={pinInput}
                   onChange={(e) => {
                     setPinInput(e.target.value);
@@ -330,10 +330,10 @@ export function OrganizerDashboard() {
                   className="dashboard-btn dashboard-btn--secondary"
                   style={{ margin: 0, padding: '0.5rem 1rem' }}
                 >
-                  Desbloquear
+                  {t('unlockBtn')}
                 </button>
               </div>
-              {pinError && <p style={{ color: '#FF5C5C', fontSize: '12px', margin: 0 }}>⚠️ PIN incorreto.</p>}
+              {pinError && <p style={{ color: '#FF5C5C', fontSize: '12px', margin: 0 }}>⚠️ {t('invalidPin')}</p>}
             </div>
           )}
 
@@ -341,14 +341,14 @@ export function OrganizerDashboard() {
             <table className="dashboard-table">
               <thead>
                 <tr>
-                  <th>Nome</th>
+                  <th>{t('tableNameHead')}</th>
                   {!organizerBlind && (
                     <th>
-                      {!draw.auditPin || isPinUnlocked ? 'Resultado' : 'Resultado (🔒)'}
+                      {!draw.auditPin || isPinUnlocked ? t('tableResultHead') : `${t('tableResultHead')} (🔒)`}
                     </th>
                   )}
-                  <th>Status</th>
-                  <th className="dashboard-table__actions-head">Ações de Entrega</th>
+                  <th>{t('tableStatusHead')}</th>
+                  <th className="dashboard-table__actions-head">{t('tableActionsHead')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -356,7 +356,7 @@ export function OrganizerDashboard() {
                   const isRevealed = !!revealedStatus[p.id];
                   const revealTime = revealedStatus[p.id];
                   const revealUrl = (p as any).revealUrl || '';
- 
+  
                   return (
                     <tr key={p.id} className="dashboard-table__row">
                       <td className="dashboard-table__name">{p.displayName}</td>
@@ -368,7 +368,7 @@ export function OrganizerDashboard() {
                               <strong>{getTargetName(revealUrl)}</strong>
                             </>
                           ) : (
-                            <span style={{ color: 'var(--text-secondary, #A3A3AE)', fontSize: '13px' }}>🔒 Protegido por PIN</span>
+                            <span style={{ color: 'var(--text-secondary, #A3A3AE)', fontSize: '13px' }}>🔒 {t('pinInputPlaceholder').split('.')[0]}</span>
                           )}
                         </td>
                       )}
@@ -377,9 +377,9 @@ export function OrganizerDashboard() {
                           className={`dashboard-badge ${
                             isRevealed ? 'dashboard-badge--revealed' : 'dashboard-badge--pending'
                           }`}
-                          title={isRevealed && revealTime ? `Visualizado em: ${new Date(revealTime).toLocaleString('pt-BR')}` : undefined}
+                          title={isRevealed && revealTime ? `${t('statusRevealed')}: ${new Date(revealTime).toLocaleString()}` : undefined}
                         >
-                          {isRevealed ? 'Revelado' : 'Pendente'}
+                          {isRevealed ? t('statusRevealed') : t('statusPending')}
                         </span>
                       </td>
                       <td>
@@ -387,11 +387,11 @@ export function OrganizerDashboard() {
                           <button
                             className="dashboard-btn dashboard-btn--secondary"
                             onClick={() => handleCopyLink(revealUrl, idx)}
-                            aria-label={`Copiar link de revelação de ${p.displayName}`}
+                            aria-label={`Copy reveal URL for ${p.displayName}`}
                           >
-                            {copiedIndex === idx ? 'Copiado!' : 'Copiar Link'}
+                            {copiedIndex === idx ? t('linkCopiado') : t('copiarLinkBtn')}
                           </button>
- 
+  
                           {p.channels.some((c) => c.type === 'WHATSAPP_LINK') && (
                             <a
                               className="dashboard-btn dashboard-btn--wa"
@@ -401,7 +401,7 @@ export function OrganizerDashboard() {
                               )}
                               target="_blank"
                               rel="noopener noreferrer"
-                              aria-label={`Enviar via WhatsApp para ${p.displayName}`}
+                              aria-label={`Send via WhatsApp to ${p.displayName}`}
                             >
                               WhatsApp
                             </a>
@@ -421,16 +421,16 @@ export function OrganizerDashboard() {
       {showCancelModal && (
         <div className="dashboard-modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <div className="dashboard-modal" style={{ backgroundColor: 'var(--color-bg-surface, #18181D)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border-default, #2C2C34)', maxWidth: '400px', width: '90%', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '18px', color: 'var(--text-primary)', marginBottom: '1rem' }}>⚠️ Cancelar Sorteio</h3>
+            <h3 style={{ fontSize: '18px', color: 'var(--text-primary)', marginBottom: '1rem' }}>⚠️ {t('cancelModalTitle')}</h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
-              Deseja realmente cancelar este sorteio? Esta ação irá invalidar todos os links de revelação enviados aos participantes de forma definitiva.
+              {t('cancelModalDesc')}
               <br />
               <strong style={{ color: 'var(--text-primary)' }}>
-                ({Object.keys(revealedStatus).length} participantes já revelaram seus resultados)
+                ({Object.keys(revealedStatus).length} {t('participantsCounter')} {t('statusRevealed').toLowerCase()})
               </strong>
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button onClick={() => setShowCancelModal(false)} className="dashboard-btn dashboard-btn--secondary" style={{ margin: 0 }}>Voltar</button>
+              <button onClick={() => setShowCancelModal(false)} className="dashboard-btn dashboard-btn--secondary" style={{ margin: 0 }}>{t('backBtn')}</button>
               <button 
                 onClick={() => {
                   const updatedDraw: Draw = { ...draw, status: 'CANCELLED' };
@@ -441,24 +441,24 @@ export function OrganizerDashboard() {
                 className="dashboard-btn" 
                 style={{ backgroundColor: '#FF5C5C', color: '#FFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer' }}
               >
-                Confirmar Cancelamento
+                {t('cancelConfirmBtn')}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ASCII Coupon Modal */}
+      {/* ASCII Receipt Coupon Modal */}
       {showAsciiModal && (
         <div className="dashboard-modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <div className="dashboard-modal" style={{ backgroundColor: 'var(--color-bg-surface, #18181D)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border-default, #2C2C34)', maxWidth: '650px', width: '95%', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '18px', color: 'var(--text-primary)', marginBottom: '1rem', fontFamily: 'var(--font-display)' }}>🧾 Cupom Fiscal de Auditoria</h3>
+            <h3 style={{ fontSize: '18px', color: 'var(--text-primary)', marginBottom: '1rem', fontFamily: 'var(--font-display)' }}>🧾 {t('fiscalCouponTitle')}</h3>
             <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '1.5rem', borderRadius: '8px' }}>
               <pre style={{
                 fontFamily: 'monospace',
                 whiteSpace: 'pre',
                 backgroundColor: '#0F0F12',
-                color: '#00FF66', // Matrix/terminal green for cyber aesthetic
+                color: '#00FF66',
                 padding: '1.5rem',
                 borderRadius: '8px',
                 overflowX: 'auto',
@@ -471,13 +471,13 @@ export function OrganizerDashboard() {
               </pre>
             </div>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button onClick={() => setShowAsciiModal(false)} className="dashboard-btn dashboard-btn--secondary" style={{ margin: 0 }}>Voltar</button>
+              <button onClick={() => setShowAsciiModal(false)} className="dashboard-btn dashboard-btn--secondary" style={{ margin: 0 }}>{t('backBtn')}</button>
               <button 
                 onClick={handleCopyCoupon}
                 className="dashboard-btn" 
                 style={{ backgroundColor: 'var(--color-accent-default, #FF2E93)', color: '#FFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer' }}
               >
-                {couponCopied ? 'Comprovante Copiado!' : 'Copiar Comprovante'}
+                {couponCopied ? t('couponCopiedFeedback') : t('copyCouponBtn')}
               </button>
             </div>
           </div>

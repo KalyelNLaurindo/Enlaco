@@ -1,31 +1,29 @@
 import { useState } from 'react';
 import { useWizardStore } from '../store/wizardStore';
+import { useTranslation } from '../../../domain/services/i18nService';
 import './ExclusionRulesStep.css';
 
-/**
- * Wizard Step 2 — Exclusion Rules.
- * Implements the two-tap "select A → select B" interaction described in the
- * Design Brief §03. Every rule is bidirectional per ADR-01.
- */
+// Wizard Step 3 — Exclusion Rules step.
+// Enables setting bidirectional rules using a simple two-tap selection mechanism.
 export function ExclusionRulesStep() {
+  const { t } = useTranslation();
   const { participants, exclusionRules, addExclusionRule, removeExclusionRule, nextStep, prevStep } =
     useWizardStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Handles clicking a participant chip to create or deselect an exclusion rule.
   function handleParticipantClick(id: string) {
     if (!selectedId) {
-      // First tap — select participant A.
       setSelectedId(id);
     } else if (selectedId === id) {
-      // Tapping the same participant deselects.
       setSelectedId(null);
     } else {
-      // Second tap — create the exclusion rule between A and B.
       addExclusionRule(selectedId, id);
       setSelectedId(null);
     }
   }
 
+  // Returns the display name of a participant from their unique ID.
   function getParticipantName(id: string): string {
     return participants.find((p) => p.id === id)?.displayName ?? id;
   }
@@ -34,20 +32,20 @@ export function ExclusionRulesStep() {
     <section className="wizard-step" aria-labelledby="exclusions-title">
       <header className="wizard-step__header">
         <h2 className="wizard-step__title" id="exclusions-title">
-          Regras de exclusão
+          {t('stepExclusions')}
         </h2>
         <p className="wizard-step__subtitle">
-          Selecione dois participantes que não podem se sortear mutuamente.
+          {t('exclusionsSub')}
           {selectedId && (
             <strong className="exclusions-step__hint">
-              {' '}Agora selecione quem <em>{getParticipantName(selectedId)}</em> não pode tirar.
+              {' '}{t('exclusionsHint').replace('{name}', getParticipantName(selectedId))}
             </strong>
           )}
         </p>
       </header>
 
-      {/* Participant selector grid */}
-      <ul className="exclusions-step__grid" aria-label="Selecionar participantes">
+      {/* Participant grid selection */}
+      <ul className="exclusions-step__grid" aria-label="Select participants">
         {participants.map((p) => {
           const isSelected = selectedId === p.id;
           return (
@@ -59,7 +57,7 @@ export function ExclusionRulesStep() {
                 aria-pressed={isSelected}
               >
                 <span className="exclusions-step__avatar">
-                  {p.displayName.charAt(0).toUpperCase()}
+                   {p.displayName.charAt(0).toUpperCase()}
                 </span>
                 {p.displayName}
               </button>
@@ -68,13 +66,13 @@ export function ExclusionRulesStep() {
         })}
       </ul>
 
-      {/* Rules list */}
+      {/* Existing configured rules list */}
       {exclusionRules.length === 0 ? (
         <div className="exclusions-step__empty" data-testid="empty-exclusions">
-          <p>Nenhuma exclusão configurada. Esta etapa é opcional.</p>
+          <p>{t('noExclusions')}</p>
         </div>
       ) : (
-        <ul className="exclusions-step__rules" aria-label="Regras configuradas">
+        <ul className="exclusions-step__rules" aria-label={t('rulesListTitle')}>
           {exclusionRules.map((rule, idx) => (
             <li key={idx} className="exclusions-step__rule" data-testid={`exclusion-rule-${idx}`}>
               <span className="exclusions-step__rule-pair">
@@ -85,7 +83,7 @@ export function ExclusionRulesStep() {
               <button
                 className="exclusions-step__rule-remove"
                 onClick={() => removeExclusionRule(rule.participantA, rule.participantB)}
-                aria-label="Remover regra"
+                aria-label={t('removeRule')}
               >
                 ×
               </button>
@@ -96,10 +94,10 @@ export function ExclusionRulesStep() {
 
       <div className="wizard-step__actions">
         <button className="btn-secondary" onClick={prevStep}>
-          Voltar
+          {t('backBtn')}
         </button>
         <button className="btn-primary" onClick={nextStep}>
-          Próximo
+          {t('nextBtn')}
         </button>
       </div>
     </section>

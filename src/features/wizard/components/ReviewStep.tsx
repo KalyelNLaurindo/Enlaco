@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { useWizardStore } from '../store/wizardStore';
+import { useTranslation } from '../../../domain/services/i18nService';
 import './ReviewStep.css';
 
 interface ReviewStepProps {
-  /** Called when the organizer confirms and clicks "Gerar Sorteio". */
+  // Callback triggered when the organizer clicks generate
   onGenerate: (pin?: string) => void;
 }
 
-/**
- * Wizard Step 3 — Review & Generate.
- * Blocking final confirmation screen. Shows the full participant list,
- * all exclusion rules, event details, and blind mode status.
- * A mandatory irreversibility checkbox gates the "Gerar Sorteio" action.
- */
+// Wizard Step 4 — Final Review step.
+// Summarizes event details, participants list, and exclusion rules.
+// Gated by a mandatory checkbox to ensure the user knows generation is final.
 export function ReviewStep({ onGenerate }: ReviewStepProps) {
+  const { t } = useTranslation();
   const { participants, exclusionRules, eventDetails, organizerBlind, prevStep } =
     useWizardStore();
   const [confirmed, setConfirmed] = useState(false);
   const [pin, setPin] = useState('');
 
+  // Retrieves display name of a participant from their unique ID.
   function getParticipantName(id: string): string {
     return participants.find((p) => p.id === id)?.displayName ?? id;
   }
@@ -27,40 +27,38 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
     <section className="wizard-step" aria-labelledby="review-title">
       <header className="wizard-step__header">
         <h2 className="wizard-step__title" id="review-title">
-          Revisão final
+          {t('stepReview')}
         </h2>
         <p className="wizard-step__subtitle">
-          Confirme todos os dados antes de gerar o sorteio. Esta ação é irreversível.
+          {t('reviewSub')}
         </p>
       </header>
 
-      {/* Event details summary */}
+      {/* Event Details Summary */}
       <div className="review-step__card">
-        <h3 className="review-step__section-title">Evento</h3>
+        <h3 className="review-step__section-title">{t('stepDetails')}</h3>
         <p className="review-step__event-name">{eventDetails.eventName}</p>
         {eventDetails.eventDate && (
           <p className="review-step__detail">📅 {eventDetails.eventDate}</p>
         )}
         {eventDetails.suggestedValue && (
-          <p className="review-step__detail">🎁 Valor sugerido: {eventDetails.suggestedValue}</p>
+          <p className="review-step__detail">🎁 {t('suggestedValueLabel')}: {eventDetails.suggestedValue}</p>
         )}
       </div>
 
-      {/* Blind mode */}
+      {/* Organizer / Draw Mode */}
       <div className="review-step__card" data-testid="review-blind-mode">
-        <h3 className="review-step__section-title">Modo do organizador</h3>
+        <h3 className="review-step__section-title">{t('modeLabel')}</h3>
         <p className="review-step__detail">
-          {organizerBlind
-            ? '🙈 Modo cego ativado — você participará sem ver os resultados'
-            : '👁 Modo normal — você verá todos os pares após a geração'}
+          {organizerBlind ? t('blindModeActive') : t('openModeActive')}
         </p>
       </div>
 
-      {/* Audit PIN (Optional) */}
+      {/* Security Audit PIN */}
       <div className="review-step__card">
-        <h3 className="review-step__section-title">🔒 Senha/PIN de Auditoria (Opcional)</h3>
+        <h3 className="review-step__section-title">🔒 {t('pinLabel')}</h3>
         <p className="review-step__detail" style={{ marginBottom: '0.75rem', fontSize: '13px' }}>
-          Defina uma senha numérica (PIN) para proteger os emparelhamentos no painel contra olhares curiosos.
+          {t('pinHelpText')}
         </p>
         <input
           type="text"
@@ -85,10 +83,10 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
         />
       </div>
 
-      {/* Participants */}
+      {/* Participants List */}
       <div className="review-step__card">
         <h3 className="review-step__section-title">
-          Participantes ({participants.length})
+          {t('stepParticipants')} ({participants.length})
         </h3>
         <ul className="review-step__list">
           {participants.map((p) => (
@@ -105,17 +103,17 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
         </ul>
       </div>
 
-      {/* Exclusion Rules */}
+      {/* Exclusion Rules List */}
       <div className="review-step__card" data-testid="review-exclusions">
         <h3 className="review-step__section-title">
-          Regras de exclusão ({exclusionRules.length})
+          {t('stepExclusions')} ({exclusionRules.length})
         </h3>
         {exclusionRules.length === 0 ? (
-          <p className="review-step__empty">Nenhuma exclusão configurada.</p>
+          <p className="review-step__empty">{t('noExclusions')}</p>
         ) : (
           <ul className="review-step__list">
             {exclusionRules.map((rule, idx) => (
-              <li key={idx} className="review-step__item review-step__item--rule">
+              <li key={idx} className="review-step__item review-step__item--rule" data-testid={`exclusion-rule-${idx}`}>
                 <strong>{getParticipantName(rule.participantA)}</strong>
                 <span className="review-step__rule-sep"> ↔ </span>
                 <strong>{getParticipantName(rule.participantB)}</strong>
@@ -125,7 +123,7 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
         )}
       </div>
 
-      {/* Irreversibility gate — mandatory checkbox */}
+      {/* Confirmed / Irreversible checkbox gate */}
       <div className="review-step__gate">
         <label className="review-step__gate-label">
           <input
@@ -133,18 +131,17 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
             className="review-step__checkbox"
             checked={confirmed}
             onChange={(e) => setConfirmed(e.target.checked)}
-            aria-label="Entendo que esta ação é irreversível"
+            aria-label={t('checkboxAcknowledge')}
           />
           <span>
-            Entendo que a geração do sorteio é <strong>irreversível</strong> e não poderá ser
-            desfeita.
+            {t('checkboxAcknowledge')}
           </span>
         </label>
       </div>
 
       <div className="wizard-step__actions">
         <button className="btn-secondary" onClick={prevStep}>
-          Voltar
+          {t('backBtn')}
         </button>
         <button
           className="btn-primary review-step__generate-btn"
@@ -152,12 +149,12 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
           disabled={!confirmed}
           aria-describedby="generate-warning"
         >
-          Gerar Sorteio
+          {t('generateBtn')}
         </button>
       </div>
 
       <p id="generate-warning" className="review-step__warning">
-        ⚠️ Ao confirmar, todos os participantes receberão seus links automaticamente.
+        {t('generateWarning')}
       </p>
     </section>
   );

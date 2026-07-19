@@ -10,14 +10,9 @@ import { ReviewStep } from './components/ReviewStep';
 import { generateDraw, DrawInfeasibleError } from '../../domain/services/drawGenerator';
 import { encodeRevealToken } from '../../domain/services/tokenService';
 import type { Draw } from '../../domain/types';
+import { useTranslation } from '../../domain/services/i18nService';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import './WizardPage.css';
-
-const WIZARD_STEPS = [
-  'Evento',
-  'Participantes',
-  'Exclusões',
-  'Revisão',
-];
 
 interface HistoryItem {
   id: string;
@@ -25,11 +20,11 @@ interface HistoryItem {
 }
 
 /**
- * /criar — Draw Creation Wizard page.
- * Orchestrates the 4-step wizard using currentStep from the Zustand store.
- * The autosave hook keeps local state persisted throughout navigation.
+ * Main entry page for the Secret Santa creation wizard.
+ * Guides the user through event details, participants, exclusions, and review.
  */
 export function WizardPage() {
+  const { t } = useTranslation();
   const { participants, exclusionRules, eventDetails, organizerBlind, currentStep, reset } = useWizardStore();
   const { isSaving } = useWizardAutosave();
   const navigate = useNavigate();
@@ -38,7 +33,14 @@ export function WizardPage() {
   const [importError, setImportError] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
-  // Load created draws history on mount
+  const WIZARD_STEPS = [
+    t('stepDetails'),
+    t('stepParticipants'),
+    t('stepExclusions'),
+    t('stepReview'),
+  ];
+
+  // Loads previously created draws from local storage on mount.
   useEffect(() => {
     try {
       const storedHistory = JSON.parse(localStorage.getItem('enlaco_draw_history') || '[]') as string[];
@@ -53,26 +55,23 @@ export function WizardPage() {
       });
       setHistory(historyItems);
     } catch (err) {
-      console.error('Failed to load draw history', err);
+      console.error('Falha ao carregar histórico do sorteio', err);
     }
   }, []);
 
+  // Runs the backtracking draw generator and encodes reveal URLs for each participant.
   function handleGenerate(pin?: string) {
     setError(null);
     try {
-      // 1. Run the backtracking MRV algorithm locally
       const assignmentMap = generateDraw(participants, exclusionRules);
 
-      // 2. Generate a unique draw ID
       const drawId = `d_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-      // 3. Map participants to include their pre-generated reveal URLs containing encoded match data
       const participantsWithLinks = participants.map((p) => {
         const receiverId = assignmentMap.get(p.id)!;
         const receiver = participants.find((r) => r.id === receiverId)!;
         
-        // Encode the match in a secure URL-safe token
         const token = encodeRevealToken(p.displayName, receiver.displayName, eventDetails, drawId, p.id, expirationDate);
         const revealUrl = `/r/${token}`;
 
@@ -82,7 +81,6 @@ export function WizardPage() {
         };
       });
 
-      // 4. Construct the completed Draw object
       const completedDraw: Draw = {
         drawId,
         status: 'GENERATED',
@@ -92,58 +90,57 @@ export function WizardPage() {
         eventDetails,
         participants: participantsWithLinks,
         exclusionRules,
-        tokenValidUntil: expirationDate, // 24 hours default TTL
+        tokenValidUntil: expirationDate,
         auditPin: pin,
       };
 
-      // 5. Persist the draw in localStorage
       localStorage.setItem(`enlaco-draw-${drawId}`, JSON.stringify(completedDraw));
 
-      // 6. Update draw history
       const storedHistory = JSON.parse(localStorage.getItem('enlaco_draw_history') || '[]') as string[];
-      const updatedHistory = Array.from(new Set([...storedHistory, drawId]));
-      localStorage.setItem('enlaco_draw_history', JSON.stringify(updatedHistory));
+      if (!storedHistory.includes(drawId)) {
+        storedHistory.push(drawId);
+        localStorage.setItem('enlaco_draw_history', JSON.stringify(storedHistory));
+      }
 
-      // 7. Reset the wizard store state
       reset();
-
-      // 8. Navigate to the organizer dashboard
       navigate(`/sorteio/${drawId}`);
     } catch (err) {
       if (err instanceof DrawInfeasibleError) {
         setError(err.message);
       } else {
-        setError('Ocorreu um erro inesperado ao gerar o sorteio. Por favor, tente novamente.');
-        console.error(err);
+        setError('Ocorreu um erro inesperado ao gerar o sorteio. Verifique os dados e tente novamente.');
       }
     }
   }
 
+  // Imports an existing draw using its admin link or ID code.
   function handleImport(e: React.FormEvent) {
     e.preventDefault();
     setImportError(null);
-    const code = importCode.trim();
-    if (!code) return;
-
-    // Extract ID if a full URL was pasted
-    let extractedId = code;
-    if (code.includes('/sorteio/')) {
-      extractedId = code.split('/sorteio/').pop()?.split('?')[0] || code;
+    
+    let cleanId = importCode.trim();
+    if (cleanId.includes('/sorteio/')) {
+      cleanId = cleanId.split('/sorteio/').pop()?.split('?')[0] || '';
     }
 
-    const drawData = localStorage.getItem(`enlaco-draw-${extractedId}`);
-    if (!drawData) {
-      setImportError('Código ou link inválido. Sorteio não encontrado neste navegador.');
+    if (!cleanId) {
+      setImportError('Código inválido ou em branco.');
       return;
     }
 
-    // Save imported draw ID to history
-    const storedHistory = JSON.parse(localStorage.getItem('enlaco_draw_history') || '[]') as string[];
-    const updatedHistory = Array.from(new Set([...storedHistory, extractedId]));
-    localStorage.setItem('enlaco_draw_history', JSON.stringify(updatedHistory));
+    const drawData = localStorage.getItem(`enlaco-draw-${cleanId}`);
+    if (!drawData) {
+      setImportError('Código ou link inválido ou não encontrado localmente.');
+      return;
+    }
 
-    setImportCode('');
-    navigate(`/sorteio/${extractedId}`);
+    const storedHistory = JSON.parse(localStorage.getItem('enlaco_draw_history') || '[]') as string[];
+    if (!storedHistory.includes(cleanId)) {
+      storedHistory.push(cleanId);
+      localStorage.setItem('enlaco_draw_history', JSON.stringify(storedHistory));
+    }
+
+    navigate(`/sorteio/${cleanId}`);
   }
 
   function renderStep() {
@@ -158,14 +155,19 @@ export function WizardPage() {
 
   return (
     <div className="wizard-page">
-      {/* Sticky stepper — always visible */}
+      {/* Top bar containing the language switcher component */}
+      <header style={{ display: 'flex', justifyContent: 'flex-end', padding: '1rem max(1rem, calc((100% - 600px)/2))', width: '100%', boxSizing: 'border-box' }}>
+        <LanguageSwitcher />
+      </header>
+
+      {/* Stepper indicator showing the current step */}
       <WizardStepper currentStep={currentStep} steps={WIZARD_STEPS} />
 
-      {/* Autosave indicator */}
+      {/* Visual indicator for auto-saving form progress */}
       {isSaving && (
-        <div className="wizard-page__saving" aria-live="polite" aria-label="Salvando automaticamente">
+        <div className="wizard-page__saving" aria-live="polite" aria-label={t('saving')}>
           <span className="wizard-page__saving-dot" />
-          Salvando…
+          {t('saving')}…
         </div>
       )}
 
@@ -189,15 +191,15 @@ export function WizardPage() {
         </div>
       )}
 
-      {/* Active step content */}
+      {/* Active wizard step component */}
       <main className="wizard-page__content">
         {renderStep()}
       </main>
 
-      {/* History and Import Sidebar/Footer section - only rendered on the event details step (first page) to keep wizard focused */}
+      {/* Sidebar/footer panel showing history and code import (only on step 0) */}
       {currentStep === 0 && (
         <section className="wizard-history-panel" style={{ maxWidth: '600px', margin: '2rem auto 0 auto', padding: '1.5rem', backgroundColor: 'var(--color-bg-surface, #18181D)', border: '1px solid var(--color-border-default, #2C2C34)', borderRadius: '16px' }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)', fontSize: '18px', marginBottom: '1rem' }}>Sorteios Anteriores</h3>
+          <h3 style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)', fontSize: '18px', marginBottom: '1rem' }}>{t('historyTitle')}</h3>
           
           {history.length > 0 ? (
             <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.5rem 0', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -209,21 +211,21 @@ export function WizardPage() {
               ))}
             </ul>
           ) : (
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 1.5rem 0' }}>Nenhum sorteio anterior registrado.</p>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', margin: '0 0 1.5rem 0' }}>{t('noHistory')}</p>
           )}
 
           <form onSubmit={handleImport} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid var(--color-border-default, #2C2C34)', paddingTop: '1rem' }}>
-            <label htmlFor="import-code" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>Importar Sorteio Existente</label>
+            <label htmlFor="import-code" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('importCode')}</label>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <input
                 id="import-code"
                 type="text"
-                placeholder="Cole o link ou código do painel..."
+                placeholder={t('importPlaceholder')}
                 value={importCode}
                 onChange={(e) => setImportCode(e.target.value)}
                 style={{ flex: 1, padding: '0.75rem', backgroundColor: 'var(--color-bg-surface-raised, #212127)', border: '1px solid var(--color-border-default, #2C2C34)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '14px' }}
               />
-              <button type="submit" style={{ padding: '0.75rem 1.25rem', backgroundColor: 'var(--color-accent-default, #FF2E93)', color: '#FFF', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>Importar</button>
+              <button type="submit" style={{ padding: '0.75rem 1.25rem', backgroundColor: 'var(--color-accent-default, #FF2E93)', color: '#FFF', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}>{t('importBtn')}</button>
             </div>
             {importError && <p style={{ color: '#FF5C5C', fontSize: '12px', margin: 0 }}>⚠️ {importError}</p>}
           </form>

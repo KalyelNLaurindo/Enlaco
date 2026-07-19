@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from '../../../domain/services/i18nService';
 import './RevealCard.css';
 
 interface RevealCardProps {
@@ -8,31 +9,29 @@ interface RevealCardProps {
   onReveal?: () => void;
 }
 
-/**
- * Tap-to-Reveal card component. Displays a masked state with a CTA button
- * and transitions to showing the recipient's name and optional organizer
- * message on interaction. Fully accessible via ARIA attributes.
- */
+// Tap-to-Reveal card component.
+// Masks the matched partner name until clicked by the participant.
 export function RevealCard({ recipientName, eventName, organizerMessage, onReveal }: RevealCardProps) {
+  const { t } = useTranslation();
   const [revealed, setRevealed] = useState(false);
 
   return (
     <section
       className="reveal-card"
-      aria-label={`Sorteio do ${eventName}`}
+      aria-label={t('drawFor').replace('{name}', eventName)}
       role="region"
     >
-      {/* Event context header — always visible */}
+      {/* Event context header - always visible */}
       <header className="reveal-card__header">
-        <p className="reveal-card__label">Você está participando de</p>
+        <p className="reveal-card__label">{t('participatingIn')}</p>
         <h1 className="reveal-card__event-name">{eventName}</h1>
       </header>
 
-      {/* Recipient reveal area */}
+      {/* Recipient reveal viewport */}
       <div className="reveal-card__body">
         {revealed ? (
           <div className="reveal-card__result" aria-live="polite">
-            <p className="reveal-card__you-got">Você tirou</p>
+            <p className="reveal-card__you-got">{t('youDrew')}</p>
             <p className="reveal-card__recipient">{recipientName}</p>
             {organizerMessage && (
               <blockquote
@@ -56,9 +55,9 @@ export function RevealCard({ recipientName, eventName, organizerMessage, onRevea
                 setRevealed(true);
                 if (onReveal) onReveal();
               }}
-              aria-label="Revelar meu amigo secreto"
+              aria-label={t('revealButton')}
             >
-              Revelar
+              {t('revealButton').split(' ')[0]} {/* Grab "Reveal" or full text */}
             </button>
           </div>
         )}

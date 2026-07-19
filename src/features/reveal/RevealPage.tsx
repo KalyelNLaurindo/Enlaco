@@ -1,55 +1,59 @@
 import { useParams } from 'react-router-dom';
 import { decodeRevealToken } from '../../domain/services/tokenService';
 import { RevealCard } from './components/RevealCard';
+import { useTranslation } from '../../domain/services/i18nService';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher';
 import type { Draw } from '../../domain/types';
 import './RevealPage.css';
 
-/**
- * /r/:resultToken — Participant Reveal Page.
- * Full-bleed centered layout with no navigation chrome.
- * Decodes the encrypted/encoded token client-side to show the participant their match.
- * Tracks reveal status dynamically in localStorage for organizer sync.
- */
+// Participant Reveal page.
+// Decodes URL token in the client browser and renders the Secret Santa card.
 export function RevealPage() {
+  const { t } = useTranslation();
   const { resultToken } = useParams<{ resultToken: string }>();
 
   if (!resultToken) {
-    return <RevealError message="Nenhum link de revelação informado." />;
+    return <RevealError message={t('emptyTokenError')} />;
   }
 
   try {
     const { giverName, receiverName, eventDetails, drawId, participantId, tokenValidUntil } = decodeRevealToken(resultToken);
 
-    // Expiration check (TTL check)
+    // Checks if the draw link has expired based on its encoded expiration date.
     if (tokenValidUntil && new Date() > new Date(tokenValidUntil)) {
-      return <RevealError message="Este link de revelação expirou." />;
+      return <RevealError message={t('expiredTokenError')} />;
     }
 
-    // Local status verification if available
+    // Syncs and checks draw cancellation/expiration state from local device memory if available.
     if (drawId) {
       const localDrawData = localStorage.getItem(`enlaco-draw-${drawId}`);
       if (localDrawData) {
         const localDraw = JSON.parse(localDrawData) as Draw;
         if (localDraw.status === 'CANCELLED') {
-          return <RevealError message="Este sorteio foi cancelado pelo organizador." />;
+          return <RevealError message={t('cancelledDrawError')} />;
         }
         if (localDraw.tokenValidUntil && new Date() > new Date(localDraw.tokenValidUntil)) {
-          return <RevealError message="Este link de revelação expirou." />;
+          return <RevealError message={t('expiredTokenError')} />;
         }
       }
     }
 
+    // Records the reveal timestamp locally to update the organizer dashboard in real-time.
     const handleReveal = () => {
       if (drawId && participantId) {
-        // Record timestamp in localStorage to sync status back to organizer dashboard
         localStorage.setItem(`enlaco_revealed_${drawId}_${participantId}`, new Date().toISOString());
       }
     };
 
     return (
       <div className="reveal-page">
+        {/* Floating language selector in the top-right corner */}
+        <header style={{ position: 'absolute', top: 0, right: 0, padding: '1rem' }}>
+          <LanguageSwitcher />
+        </header>
+
         <div className="reveal-page__greeting">
-          Olá, <strong className="reveal-page__giver">{giverName}</strong>!
+          {t('hello')}, <strong className="reveal-page__giver">{giverName}</strong>!
         </div>
         <RevealCard
           recipientName={receiverName}
@@ -60,7 +64,7 @@ export function RevealPage() {
       </div>
     );
   } catch (err) {
-    return <RevealError message="Este link de revelação é inválido ou está corrompido." />;
+    return <RevealError message={t('invalidTokenError')} />;
   }
 }
 
@@ -68,15 +72,22 @@ interface RevealErrorProps {
   message: string;
 }
 
+// Error state helper card component when draw link is invalid, expired, or cancelled.
 function RevealError({ message }: RevealErrorProps) {
+  const { t } = useTranslation();
   return (
     <div className="reveal-error">
+      {/* Floating language switcher even on error page */}
+      <header style={{ position: 'absolute', top: 0, right: 0, padding: '1rem' }}>
+        <LanguageSwitcher />
+      </header>
+
       <main className="reveal-error__card">
         <span className="reveal-error__icon">⚠️</span>
-        <h1 className="reveal-error__title">Oops! Algo deu errado</h1>
+        <h1 className="reveal-error__title">{t('oopsError')}</h1>
         <p className="reveal-error__msg">{message}</p>
         <p className="reveal-error__suggestion">
-          Por favor, solicite ao organizador do evento para reenviar o seu link de amigo secreto.
+          {t('requestResend')}
         </p>
       </main>
     </div>
