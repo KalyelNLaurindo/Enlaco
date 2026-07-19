@@ -3,27 +3,33 @@
    Source: context/Design Brief - Enlaço.md
    ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Nunito:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* === Color Palette (Dark Mode default) === */
-  --bg-base:           #0F0F12;
-  --bg-surface:        #18181D;
-  --bg-surface-raised: #212127;
+  /* === Color Palette (Dark Mode default based on mockup) === */
+  --bg-base:           #0D0F14;
+  --bg-surface:        #1A1E25;
+  --bg-surface-raised: #2A2F3A;
   --border-default:    #2C2C34;
   --text-primary:      #F5F5F7;
   --text-secondary:    #A3A3AE;
   --text-disabled:     #5C5C66;
-  --accent:            #FF2E93;
-  --accent-hover:      #FF57AA;
-  --accent-pressed:    #D6167A;
-  --success:           #2FE6B0;
+  
+  --accent-color-1:    #6C63FF;
+  --accent-color-2:    #4E78FF;
+  --accent-gradient:   linear-gradient(135deg, var(--accent-color-1) 0%, var(--accent-color-2) 100%);
+  --accent:            #6C63FF;
+  --accent-hover:      #7B73FF;
+  --accent-pressed:    #5B52EE;
+  
+  --success:           #22D3B6;
   --warning:           #FFC857;
   --error:             #FF5C5C;
+  --color-pink:        #FF6FB5;
 
   /* === Typography === */
-  --font-display: 'Quicksand', system-ui, sans-serif;
-  --font-body:    'Nunito', system-ui, sans-serif;
+  --font-display: 'Poppins', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
 
   /* === Type Scale (1.25 ratio, px base 16) === */
   --text-xs:   12px;
@@ -135,9 +141,18 @@ html, body {
   gap: var(--space-4);
 }
 
+/* Glassmorphism Card styling */
+.glass-card {
+  background: rgba(26, 30, 37, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
 /* Primary Button */
 .btn-primary {
-  background: var(--accent);
+  background: var(--accent-gradient);
   color: #fff;
   border: none;
   border-radius: var(--radius-pill);
@@ -148,18 +163,25 @@ html, body {
   cursor: pointer;
   min-height: 44px;
   min-width: 44px;
-  transition: background 0.15s ease;
+  transition: opacity 0.2s ease, transform 0.15s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
 }
 
-.btn-primary:hover  { background: var(--accent-hover); }
-.btn-primary:active { background: var(--accent-pressed); }
+.btn-primary:hover  { 
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.btn-primary:active { 
+  transform: translateY(1px);
+}
 .btn-primary:disabled {
   background: var(--text-disabled);
   cursor: not-allowed;
+  transform: none;
+  opacity: 0.6;
 }
 
 /* Secondary Button */

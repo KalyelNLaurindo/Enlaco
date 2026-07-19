@@ -9,28 +9,23 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['logo.png'],
       manifest: {
         name: 'Enlaço - Amigo Secreto Constrito',
         short_name: 'Enlaço',
         description: 'Sorteador de Amigo Secreto descentralizado e privado',
-        theme_color: '#0F0F12',
-        background_color: '#0F0F12',
+        theme_color: '#0D0F14',
+        background_color: '#0D0F14',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
           {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
+            src: 'logo.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'logo.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'

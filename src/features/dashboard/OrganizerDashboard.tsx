@@ -475,7 +475,7 @@ export function OrganizerDashboard() {
               <button 
                 onClick={handleCopyCoupon}
                 className="dashboard-btn" 
-                style={{ backgroundColor: 'var(--color-accent-default, #FF2E93)', color: '#FFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer' }}
+                style={{ background: 'var(--accent-gradient)', color: '#FFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer' }}
               >
                 {couponCopied ? t('couponCopiedFeedback') : t('copyCouponBtn')}
               </button>

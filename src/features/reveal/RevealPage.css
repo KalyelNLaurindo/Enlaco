@@ -4,7 +4,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-bg-base, #0F0F12);
+  background-color: var(--bg-base, #0D0F14);
   color: var(--text-primary, #F5F5F7);
   font-family: var(--font-body), sans-serif;
   padding: 1.5rem;
@@ -21,8 +21,8 @@
 }
 
 .reveal-page__giver {
-  color: var(--color-accent-default, #FF2E93);
-  text-shadow: 0 0 10px rgba(255, 46, 147, 0.3);
+  color: var(--color-primary, #6C63FF);
+  text-shadow: 0 0 10px rgba(108, 99, 255, 0.3);
 }
 
 .reveal-error {
@@ -30,7 +30,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-bg-base, #0F0F12);
+  background-color: var(--bg-base, #0D0F14);
   color: var(--text-secondary, #A3A3AE);
   font-family: var(--font-body), sans-serif;
   padding: 1.5rem;
@@ -40,8 +40,10 @@
 .reveal-error__card {
   width: 100%;
   max-width: 440px;
-  background-color: var(--color-bg-surface, #18181D);
-  border: 1px solid var(--color-border-default, #2C2C34);
+  background: rgba(26, 30, 37, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md, 20px);
   padding: 2.5rem;
   text-align: center;

@@ -1,9 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import React from 'react';
 import { I18nProvider, useTranslation } from '../../../domain/services/i18nService';
 
 describe('Sistema de Internacionalização (i18n)', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <I18nProvider>{children}</I18nProvider>
   );
@@ -50,5 +54,22 @@ describe('Sistema de Internacionalização (i18n)', () => {
       result.current.setLanguage('ru');
     });
     expect(result.current.t('createDraw')).toBe('Создать Жеребьевку');
+  });
+
+  it('deve retornar traduções para as novas telas (LandingPage e SuccessPage)', () => {
+    const { result } = renderHook(() => useTranslation(), { wrapper });
+
+    // Test default language (pt)
+    expect(result.current.t('welcomeTitle')).toBe('Bem-vindo!');
+    expect(result.current.t('offlineLabel')).toBe('Funciona offline');
+    expect(result.current.t('successTitle')).toBe('Sorteio concluído!');
+
+    // Change to English
+    act(() => {
+      result.current.setLanguage('en');
+    });
+    expect(result.current.t('welcomeTitle')).toBe('Welcome!');
+    expect(result.current.t('offlineLabel')).toBe('Works offline');
+    expect(result.current.t('successTitle')).toBe('Draw completed!');
   });
 });

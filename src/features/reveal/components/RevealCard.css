@@ -7,17 +7,17 @@
 
 .reveal-card {
   /* === Design Brief Tokens === */
-  --bg-base:          #0F0F12;
-  --bg-surface:       #18181D;
-  --bg-surface-raised:#212127;
-  --border-default:   #2C2C34;
+  --bg-base:          #0D0F14;
+  --bg-surface:       rgba(26, 30, 37, 0.6);
+  --bg-surface-raised:#2A2F3A;
+  --border-default:   rgba(255, 255, 255, 0.08);
   --text-primary:     #F5F5F7;
   --text-secondary:   #A3A3AE;
   --text-disabled:    #5C5C66;
-  --accent:           #FF2E93;
-  --accent-hover:     #FF57AA;
-  --accent-pressed:   #D6167A;
-  --success:          #2FE6B0;
+  --accent:           #6C63FF;
+  --accent-hover:     #7B73FF;
+  --accent-pressed:   #5B52EE;
+  --success:          #22D3B6;
   --warning:          #FFC857;
   --error:            #FF5C5C;
 
@@ -26,8 +26,10 @@
   --radius-md:  20px;
   --radius-pill: 9999px;
 
-  font-family: 'Nunito', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   padding: 48px 32px;
@@ -35,10 +37,10 @@
   width: 100%;
   margin: 0 auto;
 
-  /* Flat design — border-only separation (no decorative glow/shadow) */
   display: flex;
   flex-direction: column;
   gap: 32px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 /* --- Header --- */
@@ -47,7 +49,7 @@
 }
 
 .reveal-card__label {
-  font-family: 'Nunito', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 12px;
   font-weight: 400;
   color: var(--text-secondary);
@@ -57,7 +59,7 @@
 }
 
 .reveal-card__event-name {
-  font-family: 'Quicksand', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-size: 25px;
   font-weight: 700;
   color: var(--text-primary);

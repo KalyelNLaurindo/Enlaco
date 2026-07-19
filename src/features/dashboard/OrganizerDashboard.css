@@ -4,7 +4,7 @@
   justify-content: center;
   align-items: flex-start;
   padding: 2rem 1rem;
-  background-color: var(--color-bg-base, #0F0F12);
+  background-color: var(--bg-base, #0D0F14);
   color: var(--text-primary, #F5F5F7);
   font-family: var(--font-body), sans-serif;
 }
@@ -12,12 +12,13 @@
 .dashboard-card {
   width: 100%;
   max-width: 800px;
-  background-color: var(--color-bg-surface, #18181D);
-  border: 1px solid var(--color-border-default, #2C2C34);
+  background: rgba(26, 30, 37, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md, 20px);
   padding: 2.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .dashboard-card__header {
@@ -63,9 +64,9 @@
 }
 
 .dashboard-card__banner--blind {
-  background-color: rgba(255, 46, 147, 0.1);
-  border: 1px solid rgba(255, 46, 147, 0.3);
-  color: #FF57AA;
+  background-color: rgba(255, 111, 181, 0.1);
+  border: 1px solid rgba(255, 111, 181, 0.3);
+  color: var(--color-pink, #FF6FB5);
 }
 
 .dashboard-card__banner--non-blind {
@@ -132,7 +133,7 @@
 }
 
 .dashboard-table__match-arrow {
-  color: var(--color-accent-default, #FF2E93);
+  color: var(--color-primary, #6C63FF);
   font-size: 12px;
   text-transform: uppercase;
   margin-right: 0.25rem;
@@ -228,7 +229,7 @@
 .dashboard-error__cta {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background-color: var(--color-accent-default, #FF2E93);
+  background: var(--accent-gradient);
   color: #FFFFFF;
   font-weight: 600;
   text-decoration: none;

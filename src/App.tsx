@@ -1,5 +1,6 @@
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { WizardPage } from './features/wizard/WizardPage';
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import { LandingPage } from './features/landing/LandingPage';
+import { SuccessPage } from './features/wizard/components/SuccessPage';
 import { RevealPage } from './features/reveal/RevealPage';
 import { OrganizerDashboard } from './features/dashboard/OrganizerDashboard';
 import { I18nProvider } from './domain/services/i18nService';
@@ -11,8 +12,9 @@ function App() {
     <I18nProvider>
       <HashRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/criar" replace />} />
-          <Route path="/criar" element={<WizardPage />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/criar" element={<LandingPage />} />
+          <Route path="/sorteio/:drawId/concluido" element={<SuccessPage />} />
           <Route path="/r/:resultToken" element={<RevealPage />} />
           <Route path="/sorteio/:drawId" element={<OrganizerDashboard />} />
           <Route path="*" element={<NotFound />} />

@@ -46,7 +46,7 @@ export const LanguageSwitcher: React.FC = () => {
           }}
           title={opt.label}
         >
-          {opt.label.split(' ')[1]}
+          {opt.label.split(' ')[0]}
         </button>
       ))}
     </div>

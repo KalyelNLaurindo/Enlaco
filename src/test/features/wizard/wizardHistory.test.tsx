@@ -1,18 +1,28 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { WizardPage } from '../../../features/wizard/WizardPage';
+import { LandingPage } from '../../../features/landing/LandingPage';
+import { I18nProvider } from '../../../domain/services/i18nService';
 
-describe('WizardPage - History & Recovery Feature', () => {
+describe('LandingPage - History & Recovery Feature', () => {
   beforeEach(() => {
     localStorage.clear();
   });
+
+  const renderComponent = () => {
+    return render(
+      <I18nProvider>
+        <MemoryRouter>
+          <LandingPage />
+        </MemoryRouter>
+      </I18nProvider>
+    );
+  };
 
   it('should display history list when past draws exist in localStorage', () => {
     const mockHistory = ['draw-1', 'draw-2'];
     localStorage.setItem('enlaco_draw_history', JSON.stringify(mockHistory));
     
-    // Store mock draws
     localStorage.setItem('enlaco-draw-draw-1', JSON.stringify({
       drawId: 'draw-1',
       eventDetails: { eventName: 'Natal 2026' },
@@ -26,20 +36,19 @@ describe('WizardPage - History & Recovery Feature', () => {
       exclusionRules: [],
     }));
 
-    render(
-      <MemoryRouter>
-        <WizardPage />
-      </MemoryRouter>
-    );
+    renderComponent();
 
-    // Verify history section is rendered
+    // Click "Entrar em um sorteio" to open history modal
+    const enterBtn = screen.getByText('Entrar em um sorteio');
+    fireEvent.click(enterBtn);
+
+    // Verify history section is rendered in the modal
     expect(screen.getByText('Sorteios Anteriores')).toBeInTheDocument();
     expect(screen.getByText('Natal 2026')).toBeInTheDocument();
     expect(screen.getByText('Amigo Oculto Firma')).toBeInTheDocument();
   });
 
   it('should allow importing an existing draw using its ID/link', () => {
-    // A draw exists but is NOT in the history list
     localStorage.setItem('enlaco-draw-external-draw', JSON.stringify({
       drawId: 'external-draw',
       eventDetails: { eventName: 'Churrasco Audit' },
@@ -47,11 +56,11 @@ describe('WizardPage - History & Recovery Feature', () => {
       exclusionRules: [],
     }));
 
-    render(
-      <MemoryRouter>
-        <WizardPage />
-      </MemoryRouter>
-    );
+    renderComponent();
+
+    // Click "Entrar em um sorteio" to open history modal
+    const enterBtn = screen.getByText('Entrar em um sorteio');
+    fireEvent.click(enterBtn);
 
     const importInput = screen.getByPlaceholderText(/cole o link ou código/i);
     const importBtn = screen.getByRole('button', { name: /importar/i });
@@ -66,11 +75,11 @@ describe('WizardPage - History & Recovery Feature', () => {
   });
 
   it('should show an error if trying to import a non-existent draw', () => {
-    render(
-      <MemoryRouter>
-        <WizardPage />
-      </MemoryRouter>
-    );
+    renderComponent();
+
+    // Click "Entrar em um sorteio" to open history modal
+    const enterBtn = screen.getByText('Entrar em um sorteio');
+    fireEvent.click(enterBtn);
 
     const importInput = screen.getByPlaceholderText(/cole o link ou código/i);
     const importBtn = screen.getByRole('button', { name: /importar/i });
@@ -78,6 +87,6 @@ describe('WizardPage - History & Recovery Feature', () => {
     fireEvent.change(importInput, { target: { value: 'non-existent-draw-id' } });
     fireEvent.click(importBtn);
 
-    expect(screen.getByText(/código ou link inválido/i)).toBeInTheDocument();
+    expect(screen.getByText(/código ou link não encontrado/i)).toBeInTheDocument();
   });
 });
