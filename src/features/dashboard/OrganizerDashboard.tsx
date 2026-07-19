@@ -111,6 +111,20 @@ export function OrganizerDashboard() {
     }
   };
 
+  const handleSaveDraw = () => {
+    if (!drawId || !draw) return;
+    
+    // Extend expiration to 90 days from now
+    const extendedDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+    const updatedDraw: Draw = {
+      ...draw,
+      tokenValidUntil: extendedDate,
+    };
+    
+    localStorage.setItem(`enlaco-draw-${drawId}`, JSON.stringify(updatedDraw));
+    setDraw(updatedDraw);
+  };
+
   return (
     <div className="dashboard-page">
       <main className="dashboard-card">
@@ -140,6 +154,22 @@ export function OrganizerDashboard() {
               🔓 <strong>Modo Aberto:</strong> Você pode visualizar os emparelhamentos abaixo.
             </div>
           )}
+
+          {/* Expiration Banner */}
+          <div className="dashboard-card__expiration" style={{ marginTop: '1rem', padding: '0.75rem 1rem', borderRadius: '8px', backgroundColor: 'var(--color-bg-surface-raised, #212127)', border: '1px solid var(--color-border-default, #2C2C34)', fontSize: '13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>
+              ⏳ <strong>Validade dos links:</strong> {draw.tokenValidUntil ? new Date(draw.tokenValidUntil).toLocaleString('pt-BR') : '24 horas'}
+            </span>
+            {(!draw.tokenValidUntil || (new Date(draw.tokenValidUntil).getTime() - new Date().getTime() < 48 * 60 * 60 * 1000)) && (
+              <button 
+                onClick={handleSaveDraw}
+                className="dashboard-btn dashboard-btn--secondary"
+                style={{ fontSize: '11px', padding: '0.35rem 0.7rem', margin: 0 }}
+              >
+                Salvar Sorteio (90 dias)
+              </button>
+            )}
+          </div>
         </header>
 
         {/* Organizer Message Section */}
