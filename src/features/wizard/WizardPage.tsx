@@ -57,7 +57,7 @@ export function WizardPage() {
     }
   }, []);
 
-  function handleGenerate() {
+  function handleGenerate(pin?: string) {
     setError(null);
     try {
       // 1. Run the backtracking MRV algorithm locally
@@ -93,6 +93,7 @@ export function WizardPage() {
         participants: participantsWithLinks,
         exclusionRules,
         tokenValidUntil: expirationDate, // 24 hours default TTL
+        auditPin: pin,
       };
 
       // 5. Persist the draw in localStorage

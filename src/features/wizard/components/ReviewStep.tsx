@@ -4,7 +4,7 @@ import './ReviewStep.css';
 
 interface ReviewStepProps {
   /** Called when the organizer confirms and clicks "Gerar Sorteio". */
-  onGenerate: () => void;
+  onGenerate: (pin?: string) => void;
 }
 
 /**
@@ -17,6 +17,7 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
   const { participants, exclusionRules, eventDetails, organizerBlind, prevStep } =
     useWizardStore();
   const [confirmed, setConfirmed] = useState(false);
+  const [pin, setPin] = useState('');
 
   function getParticipantName(id: string): string {
     return participants.find((p) => p.id === id)?.displayName ?? id;
@@ -53,6 +54,35 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
             ? '🙈 Modo cego ativado — você participará sem ver os resultados'
             : '👁 Modo normal — você verá todos os pares após a geração'}
         </p>
+      </div>
+
+      {/* Audit PIN (Optional) */}
+      <div className="review-step__card">
+        <h3 className="review-step__section-title">🔒 Senha/PIN de Auditoria (Opcional)</h3>
+        <p className="review-step__detail" style={{ marginBottom: '0.75rem', fontSize: '13px' }}>
+          Defina uma senha numérica (PIN) para proteger os emparelhamentos no painel contra olhares curiosos.
+        </p>
+        <input
+          type="text"
+          pattern="[0-9]*"
+          maxLength={8}
+          placeholder="Ex: 1234"
+          value={pin}
+          onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+          style={{
+            width: '100%',
+            maxWidth: '200px',
+            padding: '0.75rem',
+            backgroundColor: 'var(--color-bg-surface-raised, #212127)',
+            border: '1px solid var(--color-border-default, #2C2C34)',
+            borderRadius: '8px',
+            color: 'var(--text-primary, #F5F5F7)',
+            fontSize: '14px',
+            fontFamily: 'monospace',
+            textAlign: 'center',
+            letterSpacing: '0.25em'
+          }}
+        />
       </div>
 
       {/* Participants */}
@@ -118,7 +148,7 @@ export function ReviewStep({ onGenerate }: ReviewStepProps) {
         </button>
         <button
           className="btn-primary review-step__generate-btn"
-          onClick={onGenerate}
+          onClick={() => onGenerate(pin || undefined)}
           disabled={!confirmed}
           aria-describedby="generate-warning"
         >

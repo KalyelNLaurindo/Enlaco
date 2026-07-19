@@ -49,4 +49,5 @@ export interface Draw {
   eventDetails: EventDetails;
   participants: Participant[];
   exclusionRules: ExclusionRule[];
+  auditPin?: string;
 }
