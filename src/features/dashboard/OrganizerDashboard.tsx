@@ -16,7 +16,6 @@ import './OrganizerDashboard.css';
 export function OrganizerDashboard() {
   const { drawId } = useParams<{ drawId: string }>();
   const navigate = useNavigate();
-  const { setEventDetails, setOrganizerBlind, reset } = useWizardStore();
   const [draw, setDraw] = useState<Draw | null>(null);
   const [revealedStatus, setRevealedStatus] = useState<Record<string, string>>({});
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);

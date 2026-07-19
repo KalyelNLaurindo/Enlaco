@@ -27,7 +27,6 @@ describe('RevealPage - Expiration and Life Cycle (TTL)', () => {
   it('should show error page if the token is expired (based on encoded expiration date)', () => {
     // Generate token with an expiration date in the past
     const pastDate = new Date(Date.now() - 3600 * 1000).toISOString(); // 1 hour ago
-    const token = encodeRevealToken('Bob', 'Charlie', eventDetails, 'draw-1', 'p-bob');
     
     // Inject expired state into the token
     // We modify encodeRevealToken to support passing expiration directly

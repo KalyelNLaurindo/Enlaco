@@ -9,6 +9,7 @@ interface EncodedPayload {
   m?: string; // organizer message
   id?: string; // draw ID
   p?: string;  // giver participant ID
+  exp?: string; // token expiration date
 }
 
 /**
@@ -56,6 +57,7 @@ export function decodeRevealToken(token: string): {
   eventDetails: EventDetails;
   drawId?: string;
   participantId?: string;
+  tokenValidUntil?: string;
 } {
   if (!token) {
     throw new Error('Empty token provided.');

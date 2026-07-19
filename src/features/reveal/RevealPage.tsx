@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { decodeRevealToken } from '../../domain/services/tokenService';
 import { RevealCard } from './components/RevealCard';
+import type { Draw } from '../../domain/types';
 import './RevealPage.css';
 
 /**
