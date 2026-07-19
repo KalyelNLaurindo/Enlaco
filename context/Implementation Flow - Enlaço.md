@@ -19,111 +19,74 @@
 
 ## **🚀 1. Phased Production Roadmap (The Order of Execution)**
 
-To prevent architectural regression, production follows a strict bottom-up approach. Core domain layers and backing configurations must be locked and verified before delivery adapters and user interfaces are built.
+To prevent architectural regression, production follows a strict bottom-up approach. Core domain layers and services must be locked and verified before adapters, state stores, and user interfaces are built.
 
 ### **✍️ Roadmap Phase Entry Form**
 
-- **Field 1.0 - Active Phases Config:** Phase 1 (Infrastructure & Config) / Phase 2 (Domain Context) / Phase 3 (Core Use Cases) / Phase 4 (Adapters & Integration) / Phase 5 (Observability & Hardening) / Phase 6 (Packaging & Release/CI)
+- **Field 1.0 - Active Phases Config:** Phase 1 (Infrastructure & Config) / Phase 2 (Domain Context & Algorithm) / Phase 3 (Routing & Token Sharing) / Phase 4 (Dashboard & State Sync) / Phase 5 (Aesthetics & Release/CI)
 
 #### **Phase 1: Backing Infrastructure & Configuration Setup**
 
-- **Core Focus:** Local/remote environment initialization, version control setup, configuration parsing, and system bootstrapping.
+- **Core Focus:** Local environment verification, version control configuration, local rulesets, and deployment preparations.
 - **Field 1.1 - Initialization Tasks:**
-  1. Initialize Vite project with React and TypeScript in `02-frontend/Enlaço/` using `npm create vite@latest ./ -- --template react-ts`.
-  2. Setup Poetry virtual environment and FastAPI dependencies in `03-backend/Enlaço/`.
-  3. Ensure `claude.md` is added to `.gitignore` in both repositories.
-  4. Create local `claude.md` in both repository roots containing their respective rulesets.
-  5. Perform the initial commit: `chore(setup): initialize repositories`.
+  1. Verify Vite React + TypeScript project in `02-frontend/Enlaço/`.
+  2. Setup static routing configuration (`HashRouter` instead of `BrowserRouter`) to support GitHub Pages subfolder hosting.
+  3. Ensure `claude.md` is added to `.gitignore` to prevent internal files leaking.
+  4. Perform the initial setup commit.
 - **Field 1.2 - Target File/Directory Paths:**
-  - Frontend: `d:/Software Projects/Portifolio/02-frontend/Enlaço/.gitignore`, `d:/Software Projects/Portifolio/02-frontend/Enlaço/claude.md`
-  - Backend: `d:/Software Projects/Portifolio/03-backend/Enlaço/.gitignore`, `d:/Software Projects/Portifolio/03-backend/Enlaço/claude.md`, `d:/Software Projects/Portifolio/03-backend/Enlaço/pyproject.toml`
+  - Frontend: `d:/Software Projects/Portifolio/02-frontend/Enlaço/.gitignore`, `d:/Software Projects/Portifolio/02-frontend/Enlaço/claude.md`, `d:/Software Projects/Portifolio/02-frontend/Enlaço/src/App.tsx`
 - **Field 1.3 - Exact Terminal Verification Command:**
-  - Frontend: `npm run dev -- --help` (verifies Vite scaffold)
-  - Backend: `poetry run uvicorn --version` (verifies FastAPI/Poetry install)
-- **Field 1.4 - Phase Output Deliverables:** Scaffolding complete for both frontend and backend repositories with ignored `claude.md` files in place.
+  - Frontend: `npm run dev -- --help` (verifies Vite build tool)
+- **Field 1.4 - Phase Output Deliverables:** Scaffolding verified, HashRouter configured, and workspace files ready.
 
 #### **Phase 2: Bounded Domain Context & Core Models**
 
-- **Core Focus:** Pure entities, aggregates, and value objects with absolute isolation.
+- **Core Focus:** TypeScript domain models, input validation schemas, and the backtracking MRV draw generator algorithm under strict TDD.
 - **Field 2.1 - Core Domain Modeling Tasks:**
-  1. Backend: Implement domain entities `Draw`, `Participant`, and value objects `ExclusionRule`, `Assignment`, `DeliveryChannel`.
-  2. Backend: Implement stateless `DrawGenerator` domain service with backtracking MRV algorithm.
-  3. Frontend: Define TypeScript interfaces matching backend models (`Draw`, `Participant`, `ExclusionRule`).
-  4. Frontend: Create client-side validation schemas using `zod`.
+  1. Define TypeScript interfaces for `Draw`, `Participant`, `ExclusionRule`, and `EventDetails`.
+  2. Implement client-side `drawGenerator.ts` service with backtracking MRV algorithm, 2-cycle prevention, and candidates shuffle.
+  3. Create client-side validation schemas using `zod` for participants, exclusions, and event data.
 - **Field 2.2 - Target File/Directory Paths:**
-  - Backend: `03-backend/Enlaço/app/domain/models/`, `03-backend/Enlaço/app/domain/services/`
-  - Frontend: `02-frontend/Enlaço/src/domain/types/`, `02-frontend/Enlaço/src/validation/schemas/`
+  - Frontend: `02-frontend/Enlaço/src/domain/types/index.ts`, `02-frontend/Enlaço/src/domain/services/drawGenerator.ts`, `02-frontend/Enlaço/src/validation/schemas/draw.ts`
 - **Field 2.3 - Exact Terminal Verification Command:**
-  - Backend: `poetry run pytest tests/unit/domain/`
-  - Frontend: `npm run test -- src/validation/`
-- **Field 2.4 - Phase Output Deliverables:** Isolated business domain models verified under 100% unit test coverage for the draw algorithm and validation constraints.
+  - Frontend: `npm run test -- src/domain/services/drawGenerator.test.ts`
+- **Field 2.4 - Phase Output Deliverables:** Isolated backtracking algorithm verified under 100% unit test coverage for draw constraints.
 
-#### **Phase 3: Test-Driven Core Logic (Use Cases)**
+#### **Phase 3: Routing, Token Serialization & Cryptography**
 
-- **Core Focus:** Application services coordinating business rules in-memory.
+- **Core Focus:** Stateless URL token serialization to exchange secret results without a database.
 - **Field 3.1 - Application Logic Tasks:**
-  1. Backend: Implement draw lifecycle transitions (`DRAFT` -> `GENERATED` -> `SAVED` -> `EXPIRED`).
-  2. Backend: Implement reveal logic lookup validating token status.
-  3. Frontend: Scaffold Zustand state store for creation wizard steps.
-  4. Frontend: Implement debounced wizard autosave mechanism.
+  1. Implement `tokenService.ts` to compress (zlib/pako or custom) and encode the assignment payload (`Doador` + `Recebedor` + `EventDetails`) in a URL-friendly Base64/Obfuscated string.
+  2. Implement `localStorage` state wrappers to persist organizer drafts and the generated draw session.
 - **Field 3.2 - Target File/Directory Paths:**
-  - Backend: `03-backend/Enlaço/app/application/use_cases/`
-  - Frontend: `02-frontend/Enlaço/src/features/wizard/store/`
+  - Frontend: `02-frontend/Enlaço/src/domain/services/tokenService.ts`, `02-frontend/Enlaço/src/features/wizard/store/wizardStore.ts`
 - **Field 3.3 - Exact Terminal Verification Command:**
-  - Backend: `poetry run pytest tests/unit/application/`
-  - Frontend: `npm run test -- src/features/wizard/`
-- **Field 3.4 - Phase Output Deliverables:** Lifecycle state machines and client-side wizard state managers fully operational and tested in-memory.
+  - Frontend: `npm run test -- src/domain/services/tokenService.test.ts`
+- **Field 3.4 - Phase Output Deliverables:** URL serialization services and Zustand local storage persistence verified with tests.
 
-#### **Phase 4: Interface Adapters & Integration**
+#### **Phase 4: Organizer Dashboard & Local Storage Real-Time Sync**
 
-- **Core Focus:** Concrete drivers connecting core application to external actors, physical storage, or databases.
+- **Core Focus:** Implementing the organizer view `/sorteio/:drawId` and real-time status tracking between tabs.
 - **Field 4.1 - Integration & Adapter Tasks:**
-  1. Backend: Build JSON file-based repository adapter for atomic read/write of draw states.
-  2. Backend: Implement FastAPI routers for Draw and Reveal API endpoints.
-  3. Backend: Implement SMTP-based e-mail client wrapper for delivery.
-  4. Frontend: Generate API client from OpenAPI spec via `openapi-typescript`.
-  5. Frontend: Build wizard step interfaces (Steps 1 to 4) and the Tap-to-Reveal participant component.
+  1. Implement the Organizer Dashboard listing all participants, delivery links (WhatsApp/Email), and status badges.
+  2. Implement storage event listeners (`window.addEventListener('storage', ...)`) in the dashboard to detect when a participant clicks "Reveal" in another tab (updates participant status badge in real-time).
+  3. Implement the Tap-to-Reveal card on the reveal screen.
 - **Field 4.2 - Target File/Directory Paths:**
-  - Backend: `03-backend/Enlaço/app/infrastructure/persistence/`, `03-backend/Enlaço/app/api/`
-  - Frontend: `02-frontend/Enlaço/src/api/client/`, `02-frontend/Enlaço/src/features/`
+  - Frontend: `02-frontend/Enlaço/src/features/dashboard/`, `02-frontend/Enlaço/src/features/reveal/`
 - **Field 4.3 - Exact Terminal Verification Command:**
-  - Backend: `poetry run pytest tests/integration/`
-  - Frontend: `npm run test -- src/features/`
-- **Field 4.4 - Phase Output Deliverables:** Completed REST API endpoints linked to atomic JSON storage, integrated with the client-side SPA.
+  - Frontend: `npm run test -- src/features/dashboard/`
+- **Field 4.4 - Phase Output Deliverables:** Dashboard and reveal views integrated and reacting to storage events in real-time.
 
-#### **Phase 5: Diagnostics, Observability & Hardening**
-
-- **Core Focus:** Logs, auditing, error handling, and performance validation.
+#### **Phase 5: Diagnostics, Premium Aesthetics & CI/CD**
+- **Core Focus:** Visual polishing (glassmorphism CSS, animations), rate-limiting, and deployment to GitHub Pages.
 - **Field 5.1 - Observability & Hardening Tasks:**
-  1. Backend: Integrate `slowapi` for endpoint rate-limiting.
-  2. Backend: Implement WeasyPrint-based CSV/PDF audit exports with integrity hashes.
-  3. Frontend: Setup PWA service workers using `vite-plugin-pwa`.
-  4. Frontend: Build client-side error boundary screens for expired or invalid tokens.
+  1. Apply premium HSL-tailored colors, Quicksand/Nunito typography, micro-animations, and glassmorphism cards.
+  2. Configure Vite base path for GitHub Pages and deploy pipeline via GitHub Actions.
 - **Field 5.2 - Target File/Directory Paths:**
-  - Backend: `03-backend/Enlaço/app/infrastructure/exports/`
-  - Frontend: `02-frontend/Enlaço/src/components/errors/`
+  - Frontend: `02-frontend/Enlaço/src/index.css`, `02-frontend/Enlaço/vite.config.ts`, `02-frontend/Enlaço/.github/workflows/deploy.yml`
 - **Field 5.3 - Exact Terminal Verification Command:**
-  - Backend: `poetry run pytest tests/integration/test_hardening.py`
-  - Frontend: `npm run build` (validates PWA asset generation)
-- **Field 5.4 - Phase Output Deliverables:** Production-hardened services protecting PII data with rate limits and offering export capabilities alongside an offline-installable web shell.
-
-#### **Phase 6: Packaging, CI/CD & Release Preparation**
-
-- **Core Focus:** Packaging, automated checks, standard documentation, and project finalization.
-- **Field 6.1 - Packaging & Release Tasks:**
-  1. Add MIT `LICENSE` file to the root of both repositories.
-  2. Setup GitHub Actions CI workflows for lint check, type verification, and test execution.
-  3. Configure Electron builder configs to package the frontend SPA into executable binaries.
-  4. Write final README user guide and API specifications.
-- **Field 6.2 - Target File/Directory Paths:**
-  - Backend: `03-backend/Enlaço/LICENSE`, `03-backend/Enlaço/.github/workflows/ci.yml`
-  - Frontend: `02-frontend/Enlaço/LICENSE`, `02-frontend/Enlaço/.github/workflows/ci.yml`, `02-frontend/Enlaço/packaging/electron/`
-- **Field 6.3 - Exact Terminal Verification Command:**
-  - Backend: `poetry run ruff check . && poetry run mypy app/`
-  - Frontend: `npm run lint && npm run typecheck`
-- **Field 6.4 - Phase Output Deliverables:** Production release artifacts, fully operational GitHub Actions pipelines, and complete user documentation.
-
----
+  - Frontend: `npm run build` (verifies static bundle generation)
+- **Field 5.4 - Phase Output Deliverables:** Polished application, built and ready for GitHub Pages hosting.
 
 ## **🧪 2. The Test-First (TDD) Lifecycle Gate**
 
@@ -151,61 +114,44 @@ To maintain absolute architectural alignment and prevent model hallucination or 
 ### **Frontend claude.md Rules**
 
 ```markdown
-# Enlaço — Frontend Workspace
+# Enlaço — Frontend Workspace Reference Guide (claude.md)
 
 ## 1. Role and Persona
-You are a Senior Frontend Engineer. You write clean, typed React components using TypeScript, adhering to atomic file organization and strict separation of UI layout from business hook states.
+You are a Staff Software Architect & Senior Frontend Engineer at Koyos Studios. You write clean, modular, and strictly typed React components using TypeScript, adhering to atomic file organization and strict separation of UI layout from business hook states.
 
 ## 2. Core Constraints
-- **Testing Approach:** Test-First (TDD) via Vitest & React Testing Library. Code test suites for hooks/components before writing implementation.
-- **Architectural Isolation:** UI elements remain pure layout templates. Core wizard state resides inside Zustand. API interfaces are statically typed via openapi-typescript.
-- **Mocking Constraint:** Never issue real network requests. Mock fetch/axios layers globally using handlers.
-- **Self-Healing Limit:** Max 3 consecutive build/test failures. Stop and ask the developer if hit.
-- **Data Durability:** Cache draft wizard states using native localStorage wrappers before sending debounced REST payloads.
+- **Testing Approach:** Strict Test-First (TDD) via Vitest and React Testing Library. Always code the test suites for hooks/components/services before writing the production implementation.
+- **Architectural Isolation:** UI elements remain pure layout templates. Core wizard state resides inside Zustand.
+- **Roteamento Estático:** Roteamento via HashRouter (`#/criar`, `#/r/:token`) para compatibilidade absoluta com deploys estáticos do GitHub Pages, prevenindo erros 404 de servidor.
+- **Sincronização Local (Real-Time Storage):** Sincronizar o Painel do Organizador com as ações dos participantes via eventos globais de `localStorage` para simular dinamismo em tempo real em um ambiente serverless.
+- **Criptografia/Ofuscação em URL:** A entrega de resultados individuais é feita codificando os dados no hash da URL do participante. Nenhuma informação de atribuição é enviada para qualquer servidor.
+- **Self-Healing Limit:** Max 3 consecutive build or test execution failures. Stop generation immediately and request human developer intervention if reached.
+- **Strict Pathing Rule:** Verify and place generated files strictly within the mapped directory structures. Do not create top-level directories without human confirmation.
+- **Data Durability:** Cache draft wizard states and generated draws using local storage wrappers.
 
 ## 3. Technology Stack Specifics
-- Framework: React 18 (Vite + TypeScript SPA)
-- State Management: Zustand (Creation Wizard state machine)
-- API Integration: React Query (TanStack Query) + openapi-typescript client
-- Styling: Vanilla CSS
-```
-
-### **Backend claude.md Rules**
-
-```markdown
-# Enlaço — Backend Workspace
-
-## 1. Role and Persona
-You are a Senior Backend Engineer. You write clean, object-oriented Python 3.12 code, respecting DDD domain isolation and SOLID principles.
-
-## 2. Core Constraints
-- **Testing Approach:** Strict Test-First (TDD) via pytest. Reach 100% test coverage on domain logic (domain/ and application/ layers) before writing production code.
-- **Architectural Isolation:** Domain models must not import infrastructure packages (HTTP routers, raw filesystems). Enforce ports/adapters boundary.
-- **Mocking Constraint:** Mock SMTP endpoints and file writers. Never hit external mail servers or read/write arbitrary filesystem blocks outside test folders.
-- **Self-Healing Limit:** Max 3 consecutive test failures. Stop and ask the developer if hit.
-- **Data Durability:** Implement atomic JSON write patterns (write to .tmp first, then invoke OS-level rename) to prevent state corruption.
-
-## 3. Technology Stack Specifics
-- Language & Framework: Python 3.12 + FastAPI + Pydantic v2
-- DB Paradigm: Local JSON serialization on disk
-- Package Manager: Poetry
+- **Framework:** React 18 (Vite + TypeScript SPA)
+- **Roteador:** React Router DOM (HashRouter)
+- **State Management:** Zustand (Creation Wizard state machine + Local Storage Persistence)
+- **Styling:** Vanilla CSS (curated HSL palettes, dark mode defaults, premium glassmorphism aesthetics)
+- **Testing Tools:** Vitest + React Testing Library
 ```
 
 ---
 
 ## **📋 4. Specification-to-Execution Matrix**
 
-This operational control ledger maps the engineering deliverables directly to their validation test files and corresponding AI prompt instruction specs.
+This operational control ledger maps the engineering deliverables directly to their validation test files.
 
 | Feature Identifier | Target System Boundary | Production Code File Path | Pre-Condition Test Suite File | Associated Prompt Spec File | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **F-01: Scaffolding** | Workspace Root | Multi-file Scaffolding | N/A | N/A | Pending |
-| **F-02: Domain Models** | Domain Context (Backend) | `app/domain/models/draw.py` | `tests/unit/domain/test_draw.py` | N/A | Pending |
-| **F-03: Draw Algorithm** | Domain Service (Backend) | `app/domain/services/generator.py` | `tests/unit/domain/test_generator.py` | N/A | Pending |
-| **F-04: JSON Storage** | Infrastructure (Backend) | `app/infrastructure/persistence/json_repo.py` | `tests/integration/test_json_repo.py` | N/A | Pending |
-| **F-05: API Endpoints** | Web Layer (Backend) | `app/api/routers/draws.py` | `tests/integration/test_api_draws.py` | N/A | Pending |
-| **F-06: Wizard State** | Features (Frontend) | `src/features/wizard/store/wizardStore.ts` | `src/features/wizard/store/wizardStore.test.ts` | N/A | Pending |
-| **F-07: Reveal Screen** | Features (Frontend) | `src/features/reveal/components/RevealCard.tsx` | `src/features/reveal/components/RevealCard.test.tsx` | N/A | Pending |
+| **F-01: Scaffolding** | Workspace Root | Multi-file Scaffolding | N/A | N/A | Completed |
+| **F-02: Domain Models** | Domain Context | `src/domain/types/index.ts` | N/A | N/A | Completed |
+| **F-03: Draw Algorithm** | Domain Service | `src/domain/services/drawGenerator.ts` | `src/domain/services/drawGenerator.test.ts` | N/A | Pending |
+| **F-04: Token Cryptography**| Domain Service | `src/domain/services/tokenService.ts` | `src/domain/services/tokenService.test.ts` | N/A | Pending |
+| **F-05: Wizard State** | Features (Wizard) | `src/features/wizard/store/wizardStore.ts` | `src/features/wizard/store/wizardStore.test.ts` | N/A | Completed |
+| **F-06: Dashboard & Sync** | Features (Dashboard)| `src/features/dashboard/OrganizerDashboard.tsx` | `src/features/dashboard/OrganizerDashboard.test.tsx`| N/A | Pending |
+| **F-07: Reveal Screen** | Features (Reveal) | `src/features/reveal/components/RevealCard.tsx` | `src/features/reveal/components/RevealCard.test.tsx` | N/A | Completed |
 
 ---
 

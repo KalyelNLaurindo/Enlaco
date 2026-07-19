@@ -2,27 +2,38 @@
 
 **Role:** Staff Software Architect & Lead Engineer
 **Input Sources:** `context/Problem Discovery - Enlaço.md`, `context/design/Design Brief - Enlaço.md`
-**Document Version:** v1.0 (in progress — phased delivery, 1 bounded context per section)
-**Date:** July 7, 2026
+**Document Version:** v2.0 (Pivot: Frontend-Only SPA)
+**Date:** July 19, 2026
+
+---
+
+> [!WARNING]
+> **ARQUITETURA PIVOTADA PARA FRONTEND-ONLY (JULHO 2026):**
+> O ecossistema foi modificado para rodar como uma aplicação estática hospedada no GitHub Pages (Static React SPA). 
+> - O backend FastAPI/Python e o repositório de persistência em arquivos foram descartados.
+> - Toda a lógica de sorteio (MRV backtracking) foi migrada para TypeScript no frontend.
+> - A persistência é inteiramente mantida na máquina do organizador via `localStorage`.
+> - Os links de revelação dos participantes carregam os dados criptografados/ofuscardos diretamente em seus hashes de URL.
+> - A sincronização de status de leitura é feita em tempo real via eventos do `localStorage`.
+>
+> Todas as seções e referências a backend/FastAPI abaixo devem ser interpretadas sob a ótica deste pivot.
 
 ---
 
 ## 📌 Cross-Cutting Assumptions (ASM-XX)
 
-Locked during stakeholder interview — every ADR below traces back to one of these.
-
 | ID | Assumption |
 |---|---|
-| **ASM-01** | Backend: Python + FastAPI (RESTful). Frontend: React + Vite, SPA, installable PWA. Architecture style: DDD + OOP on the backend domain layer; TDD throughout. |
-| **ASM-02** | Persistence: **no relational/NoSQL database.** Each draw is a JSON file on disk, written atomically (`.tmp` + OS rename), with a TTL-based expiration/cleanup (survives process restarts — critical, since reveals happen asynchronously over days). |
-| **ASM-03** | Repos: **multirepo** (Frontend: `02-frontend/Enlaço`, Backend: `03-backend/Enlaço`), each independently Dockerized. |
-| **ASM-04** | Delivery channels: extensible, config-driven. Default = email (custom HTML template). Optional = WhatsApp via pre-filled `wa.me` deep link (zero-cost, no Business API approval needed) and QR code. Channel abstraction must allow a real WhatsApp Business API key to be plugged in later without redesign. |
-| **ASM-05** | Packaging: PWA install covers mobile+desktop "add to home screen" out of the box. **Electron** adds a true desktop app (.exe/.dmg/AppImage). **Capacitor** adds a true installable Android APK (and iOS, tooling permitting) from the same React codebase. |
-| **ASM-06** | Testing: **100% pytest coverage on the backend** (domain + API layers — this is where correctness-critical logic lives). Frontend: Vitest + Testing Library on critical flows only (wizard, reveal), no 100% mandate. |
-| **ASM-07** | CI/CD: GitHub Actions, per-repo pipelines. Local dev tooling: standard Git + GitLens. |
-| **ASM-08** | No enterprise-grade auth. The `resultToken` in a private URL is the sole access-control mechanism per participant (matches Problem Discovery out-of-scope). |
-| **ASM-09** | Legal: Brazilian raffle-transparency law targets for-profit/monetary raffles only. Enlaço has no prize money — does not apply. Validated, not a constraint. |
-| **ASM-10** | Typical scale: up to ~50 participants per draw. Algorithmic complexity budget is designed for this ceiling, not for arbitrary N. |
+| **ASM-01** | **Frontend-Only Static SPA:** React + Vite, SPA estática hospedada no GitHub Pages, compatível com PWA e instalável. A lógica de domínio e regras de negócio rodam no browser em TypeScript. |
+| **ASM-02** | **No Backend Persistence:** Não há banco de dados centralizado. Rascunhos do organizador persistidos via `localStorage`. Links de revelação são autossuficientes e carregam dados codificados no hash da URL. |
+| **ASM-03** | **Single Repo:** O projeto está concentrado no repositório de frontend em `02-frontend/Enlaço`. |
+| **ASM-04** | **Delivery Channels:** Geração de deep-links WhatsApp (`wa.me`), links de e-mail e QR Codes no cliente. A entrega física dos links individuais é feita pelo organizador copiando e enviando cada link. |
+| **ASM-05** | **GitHub Pages Deployment:** A rota principal e as subrotas devem usar `HashRouter` para evitar que recarregamentos de página causem erro 404 no servidor estático. |
+| **ASM-06** | **Testing:** Cobertura de testes unitários com Vitest/React Testing Library para os componentes chave (Wizard, Reveal, Dashboard) e para os serviços de algoritmo de sorteio e codificação de URL. |
+| **ASM-07** | **CI/CD:** GitHub Actions para testes automáticos e publicação no GitHub Pages. |
+| **ASM-08** | **Stateless URL Auth:** O token codificado e embutido na URL do participante é o único mecanismo de acesso ao resultado individual do amigo secreto. |
+| **ASM-09** | **Legal:** Lei brasileira de sorteios não se aplica (sem fins lucrativos e sem taxas). |
+| **ASM-10** | **Typical Scale:** Limite máximo de até 50 participantes por sorteio para execução rápida do algoritmo de backtracking no navegador. |
 
 ---
 
