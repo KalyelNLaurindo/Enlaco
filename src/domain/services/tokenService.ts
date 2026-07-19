@@ -20,7 +20,8 @@ export function encodeRevealToken(
   receiverName: string,
   eventDetails: EventDetails,
   drawId?: string,
-  participantId?: string
+  participantId?: string,
+  tokenValidUntil?: string
 ): string {
   const payload: EncodedPayload = {
     g: giverName,
@@ -33,6 +34,7 @@ export function encodeRevealToken(
   if (eventDetails.organizerMessage) payload.m = eventDetails.organizerMessage;
   if (drawId) payload.id = drawId;
   if (participantId) payload.p = participantId;
+  if (tokenValidUntil) payload.exp = tokenValidUntil;
 
   const jsonStr = JSON.stringify(payload);
   
@@ -88,6 +90,7 @@ export function decodeRevealToken(token: string): {
       eventDetails,
       drawId: payload.id,
       participantId: payload.p,
+      tokenValidUntil: payload.exp,
     };
   } catch (error) {
     throw new Error(`Failed to decode reveal token: ${(error as Error).message}`);

@@ -17,7 +17,26 @@ export function RevealPage() {
   }
 
   try {
-    const { giverName, receiverName, eventDetails, drawId, participantId } = decodeRevealToken(resultToken);
+    const { giverName, receiverName, eventDetails, drawId, participantId, tokenValidUntil } = decodeRevealToken(resultToken);
+
+    // Expiration check (TTL check)
+    if (tokenValidUntil && new Date() > new Date(tokenValidUntil)) {
+      return <RevealError message="Este link de revelação expirou." />;
+    }
+
+    // Local status verification if available
+    if (drawId) {
+      const localDrawData = localStorage.getItem(`enlaco-draw-${drawId}`);
+      if (localDrawData) {
+        const localDraw = JSON.parse(localDrawData) as Draw;
+        if (localDraw.status === 'CANCELLED') {
+          return <RevealError message="Este sorteio foi cancelado pelo organizador." />;
+        }
+        if (localDraw.tokenValidUntil && new Date() > new Date(localDraw.tokenValidUntil)) {
+          return <RevealError message="Este link de revelação expirou." />;
+        }
+      }
+    }
 
     const handleReveal = () => {
       if (drawId && participantId) {

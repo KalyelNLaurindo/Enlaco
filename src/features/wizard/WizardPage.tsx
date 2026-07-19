@@ -65,6 +65,7 @@ export function WizardPage() {
 
       // 2. Generate a unique draw ID
       const drawId = `d_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
       // 3. Map participants to include their pre-generated reveal URLs containing encoded match data
       const participantsWithLinks = participants.map((p) => {
@@ -72,7 +73,7 @@ export function WizardPage() {
         const receiver = participants.find((r) => r.id === receiverId)!;
         
         // Encode the match in a secure URL-safe token
-        const token = encodeRevealToken(p.displayName, receiver.displayName, eventDetails, drawId, p.id);
+        const token = encodeRevealToken(p.displayName, receiver.displayName, eventDetails, drawId, p.id, expirationDate);
         const revealUrl = `/r/${token}`;
 
         return {
@@ -91,7 +92,7 @@ export function WizardPage() {
         eventDetails,
         participants: participantsWithLinks,
         exclusionRules,
-        tokenValidUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours default TTL
+        tokenValidUntil: expirationDate, // 24 hours default TTL
       };
 
       // 5. Persist the draw in localStorage
