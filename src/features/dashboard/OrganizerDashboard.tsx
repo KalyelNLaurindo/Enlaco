@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { decodeRevealToken } from '../../domain/services/tokenService';
 import { useWizardStore } from '../wizard/store/wizardStore';
+import { generateCSVContent, generateASCIICoupon } from './auditExportUtils';
 import type { Draw } from '../../domain/types';
 import './OrganizerDashboard.css';
 
@@ -23,6 +24,34 @@ export function OrganizerDashboard() {
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showAsciiModal, setShowAsciiModal] = useState(false);
+  const [couponCopied, setCouponCopied] = useState(false);
+
+  const handleExportCSV = () => {
+    if (!draw) return;
+    const csvContent = generateCSVContent(draw, revealedStatus, isPinUnlocked);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `auditoria-sorteio-${drawId}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleCopyCoupon = async () => {
+    if (!draw) return;
+    const coupon = generateASCIICoupon(draw, revealedStatus, isPinUnlocked);
+    try {
+      await navigator.clipboard.writeText(coupon);
+      setCouponCopied(true);
+      setTimeout(() => setCouponCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy coupon', err);
+    }
+  };
 
   // Load draw configuration from localStorage and read initial reveal statuses
   useEffect(() => {
@@ -251,6 +280,27 @@ export function OrganizerDashboard() {
           </section>
         )}
 
+        {/* Export and Audit Actions */}
+        <section className="dashboard-card__message-box" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <h2 className="dashboard-card__section-title" style={{ width: '100%', margin: 0 }}>📊 Auditoria & Exportação</h2>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button 
+              onClick={handleExportCSV}
+              className="dashboard-btn dashboard-btn--secondary"
+              style={{ margin: 0, padding: '0.5rem 1rem', fontSize: '13px' }}
+            >
+              Exportar CSV
+            </button>
+            <button 
+              onClick={() => setShowAsciiModal(true)}
+              className="dashboard-btn dashboard-btn--secondary"
+              style={{ margin: 0, padding: '0.5rem 1rem', fontSize: '13px' }}
+            >
+              Visualizar Cupom ASCII
+            </button>
+          </div>
+        </section>
+
         {/* Participants Table */}
         <section className="dashboard-card__participants">
           <h2 className="dashboard-card__section-title">Participantes ({participants.length})</h2>
@@ -393,6 +443,42 @@ export function OrganizerDashboard() {
                 style={{ backgroundColor: '#FF5C5C', color: '#FFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer' }}
               >
                 Confirmar Cancelamento
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ASCII Coupon Modal */}
+      {showAsciiModal && (
+        <div className="dashboard-modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div className="dashboard-modal" style={{ backgroundColor: 'var(--color-bg-surface, #18181D)', padding: '2rem', borderRadius: '16px', border: '1px solid var(--color-border-default, #2C2C34)', maxWidth: '650px', width: '95%', textAlign: 'center' }}>
+            <h3 style={{ fontSize: '18px', color: 'var(--text-primary)', marginBottom: '1rem', fontFamily: 'var(--font-display)' }}>🧾 Cupom Fiscal de Auditoria</h3>
+            <div style={{ maxHeight: '400px', overflowY: 'auto', marginBottom: '1.5rem', borderRadius: '8px' }}>
+              <pre style={{
+                fontFamily: 'monospace',
+                whiteSpace: 'pre',
+                backgroundColor: '#0F0F12',
+                color: '#00FF66', // Matrix/terminal green for cyber aesthetic
+                padding: '1.5rem',
+                borderRadius: '8px',
+                overflowX: 'auto',
+                textAlign: 'left',
+                fontSize: '12px',
+                lineHeight: '1.2',
+                margin: 0
+              }}>
+                {generateASCIICoupon(draw, revealedStatus, isPinUnlocked)}
+              </pre>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button onClick={() => setShowAsciiModal(false)} className="dashboard-btn dashboard-btn--secondary" style={{ margin: 0 }}>Voltar</button>
+              <button 
+                onClick={handleCopyCoupon}
+                className="dashboard-btn" 
+                style={{ backgroundColor: 'var(--color-accent-default, #FF2E93)', color: '#FFF', border: 'none', borderRadius: '8px', padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer' }}
+              >
+                {couponCopied ? 'Comprovante Copiado!' : 'Copiar Comprovante'}
               </button>
             </div>
           </div>
