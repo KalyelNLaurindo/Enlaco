@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useWizardStore } from '../store/wizardStore';
-import { useWizardAutosave } from './useWizardAutosave';
+import { useWizardStore } from '../../../../features/wizard/store/wizardStore';
+import { useWizardAutosave } from '../../../../features/wizard/hooks/useWizardAutosave';
 
 // Each test gets a clean store and fake timers to control debounce timing precisely.
 beforeEach(() => {

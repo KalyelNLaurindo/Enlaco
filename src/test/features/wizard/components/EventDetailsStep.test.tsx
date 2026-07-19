@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EventDetailsStep } from './EventDetailsStep';
-import { useWizardStore } from '../store/wizardStore';
+import { EventDetailsStep } from '../../../../features/wizard/components/EventDetailsStep';
+import { useWizardStore } from '../../../../features/wizard/store/wizardStore';
 
 beforeEach(() => {
   useWizardStore.getState().reset();

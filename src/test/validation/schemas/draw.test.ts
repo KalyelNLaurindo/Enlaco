@@ -3,7 +3,7 @@ import {
   participantSchema,
   exclusionRuleSchema,
   drawWizardSchema,
-} from './draw';
+} from '../../../validation/schemas/draw';
 
 describe('Participant Schema Validation', () => {
   it('should accept a valid participant', () => {

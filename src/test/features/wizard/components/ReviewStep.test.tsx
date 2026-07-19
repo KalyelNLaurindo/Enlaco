@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ReviewStep } from './ReviewStep';
-import { useWizardStore } from '../store/wizardStore';
+import { ReviewStep } from '../../../../features/wizard/components/ReviewStep';
+import { useWizardStore } from '../../../../features/wizard/store/wizardStore';
 
 const setupFullWizard = () => {
   const store = useWizardStore.getState();

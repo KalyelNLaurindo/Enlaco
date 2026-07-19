@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { RevealCard } from './RevealCard';
+import { RevealCard } from '../../../../features/reveal/components/RevealCard';
 
 // Shared props that represent a valid reveal payload.
 const DEFAULT_PROPS = {

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useWizardStore } from './wizardStore';
+import { useWizardStore } from '../../../../features/wizard/store/wizardStore';
 
 describe('Wizard Zustand Store', () => {
   beforeEach(() => {

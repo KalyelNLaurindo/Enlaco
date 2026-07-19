@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ExclusionRulesStep } from './ExclusionRulesStep';
-import { useWizardStore } from '../store/wizardStore';
+import { ExclusionRulesStep } from '../../../../features/wizard/components/ExclusionRulesStep';
+import { useWizardStore } from '../../../../features/wizard/store/wizardStore';
 
 // Seed helpers.
 const setupThreeParticipants = () => {
