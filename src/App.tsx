@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { WizardPage } from './features/wizard/WizardPage';
 import { RevealPage } from './features/reveal/RevealPage';
+import { OrganizerDashboard } from './features/dashboard/OrganizerDashboard';
 import './index.css';
 
 /**
@@ -12,15 +13,15 @@ import './index.css';
  */
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/criar" replace />} />
         <Route path="/criar" element={<WizardPage />} />
         <Route path="/r/:resultToken" element={<RevealPage />} />
-        {/* Phase 4: /sorteio/:drawId → OrganizerDashboard */}
+        <Route path="/sorteio/:drawId" element={<OrganizerDashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { generateDraw, DrawInfeasibleError } from './drawGenerator';
-import type { Participant, ExclusionRule } from '../types';
+import { generateDraw, DrawInfeasibleError } from '../../../domain/services/drawGenerator';
+import type { Participant, ExclusionRule } from '../../../domain/types';
 
 describe('generateDraw - Backtracking MRV Algorithm', () => {
   const createParticipant = (id: string, name: string): Participant => ({

@@ -5,6 +5,7 @@ interface RevealCardProps {
   recipientName: string;
   eventName: string;
   organizerMessage?: string;
+  onReveal?: () => void;
 }
 
 /**
@@ -12,7 +13,7 @@ interface RevealCardProps {
  * and transitions to showing the recipient's name and optional organizer
  * message on interaction. Fully accessible via ARIA attributes.
  */
-export function RevealCard({ recipientName, eventName, organizerMessage }: RevealCardProps) {
+export function RevealCard({ recipientName, eventName, organizerMessage, onReveal }: RevealCardProps) {
   const [revealed, setRevealed] = useState(false);
 
   return (
@@ -51,7 +52,10 @@ export function RevealCard({ recipientName, eventName, organizerMessage }: Revea
             </div>
             <button
               className="reveal-card__cta"
-              onClick={() => setRevealed(true)}
+              onClick={() => {
+                setRevealed(true);
+                if (onReveal) onReveal();
+              }}
               aria-label="Revelar meu amigo secreto"
             >
               Revelar
