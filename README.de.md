@@ -7,6 +7,12 @@
 > Eine datenschutzfreundliche Progressive Web App (PWA) ohne Anmeldung, mit clientseitigen Ziehungsbeschränkungen, Blindmodus für Organisatoren und Offline-QR-Code-Teilen.
 
 <p align="center">
+  <a href="https://kalyelnlaurindo.github.io/Enlaco/#/">
+    <img src="https://img.shields.io/badge/Online_Demo-Hier_Oeffnen-brightgreen?style=for-the-badge&logo=githubpages&logoColor=white" alt="Online Demo" />
+  </a>
+</p>
+
+<p align="center">
   <b>Sprachen</b><br>
   <a href="./README.md">🇧🇷 Português</a> | 
   <a href="./README.en.md">🇺🇸 English</a> | 

@@ -7,6 +7,12 @@
 > Ориентированное на конфиденциальность прогрессивное веб-приложение (PWA) без регистрации, с ограничениями жеребьевки на стороне клиента, слепым режимом для организатора и обменом QR-кодами в автономном режиме.
 
 <p align="center">
+  <a href="https://kalyelnlaurindo.github.io/Enlaco/#/">
+    <img src="https://img.shields.io/badge/%D0%9E%D0%BD%D0%BB%D0%B0%D0%B9%D0%BD_%D0%94%D0%B5%D0%BC%D0%BE-%D0%9E%D1%82%D0%BA%D1%80%D1%8B%D1%82%D1%8C_%D0%97%D0%B4%D0%B5%D1%81%D1%8C-brightgreen?style=for-the-badge&logo=githubpages&logoColor=white" alt="Онлайн Демо" />
+  </a>
+</p>
+
+<p align="center">
   <b>Языки</b><br>
   <a href="./README.md">🇧🇷 Português</a> | 
   <a href="./README.en.md">🇺🇸 English</a> | 

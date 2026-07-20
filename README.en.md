@@ -7,6 +7,12 @@
 > A privacy-focused, zero-login Progressive Web App (PWA) with client-side drawing constraints, organizer blind mode, and offline QR-code sharing.
 
 <p align="center">
+  <a href="https://kalyelnlaurindo.github.io/Enlaco/#/">
+    <img src="https://img.shields.io/badge/Live_Demo-Access_Here-brightgreen?style=for-the-badge&logo=githubpages&logoColor=white" alt="Live Demo" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/KalyelNLaurindo/Enlaco/actions/workflows/ci.yml">
     <img src="https://github.com/KalyelNLaurindo/Enlaco/actions/workflows/ci.yml/badge.svg" alt="Frontend CI/CD" />
   </a>

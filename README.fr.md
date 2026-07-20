@@ -7,6 +7,12 @@
 > Une Progressive Web App (PWA) axée sur la confidentialité, sans connexion requise, avec contraintes de tirage côté client, mode aveugle pour l'organisateur et partage de codes QR hors ligne.
 
 <p align="center">
+  <a href="https://kalyelnlaurindo.github.io/Enlaco/#/">
+    <img src="https://img.shields.io/badge/D%C3%A9mo_En_Ligne-Acc%C3%A9dez_Ici-brightgreen?style=for-the-badge&logo=githubpages&logoColor=white" alt="Démo en Ligne" />
+  </a>
+</p>
+
+<p align="center">
   <b>Langues</b><br>
   <a href="./README.md">🇧🇷 Português</a> | 
   <a href="./README.en.md">🇺🇸 English</a> | 

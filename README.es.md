@@ -7,6 +7,12 @@
 > Una aplicación web progresiva (PWA) centrada en la privacidad, sin registro, con restricciones de sorteo del lado del cliente, modo ciego para el organizador e intercambio de códigos QR fuera de línea.
 
 <p align="center">
+  <a href="https://kalyelnlaurindo.github.io/Enlaco/#/">
+    <img src="https://img.shields.io/badge/Demo_En_L%C3%ADnea-Acceda_Aqu%C3%AD-brightgreen?style=for-the-badge&logo=githubpages&logoColor=white" alt="Demo en Línea" />
+  </a>
+</p>
+
+<p align="center">
   <b>Idiomas</b><br>
   <a href="./README.md">🇧🇷 Português</a> | 
   <a href="./README.en.md">🇺🇸 English</a> | 
