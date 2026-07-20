@@ -1,0 +1,193 @@
+.success-page-container {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  background-color: var(--bg-base);
+}
+
+.success-card {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 28px;
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.success-checkmark-wrapper {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.success-checkmark-circle {
+  width: 100px;
+  height: 100px;
+  border: 4px solid var(--success);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 20px rgba(34, 211, 182, 0.3);
+  animation: circleScale 0.4s ease-in-out forwards;
+}
+
+.success-checkmark-kick {
+  position: absolute;
+  width: 16px;
+  height: 4px;
+  background-color: var(--success);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  left: 28px;
+  top: 54px;
+  animation: kickDraw 0.2s 0.4s ease-in-out forwards;
+  opacity: 0;
+}
+
+.success-checkmark-stem {
+  position: absolute;
+  width: 32px;
+  height: 4px;
+  background-color: var(--success);
+  border-radius: 2px;
+  transform: rotate(-45deg);
+  left: 38px;
+  top: 46px;
+  animation: stemDraw 0.2s 0.6s ease-in-out forwards;
+  opacity: 0;
+}
+
+@keyframes circleScale {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes kickDraw {
+  0% { width: 0; opacity: 0; }
+  100% { width: 16px; opacity: 1; }
+}
+
+@keyframes stemDraw {
+  0% { width: 0; opacity: 0; }
+  100% { width: 32px; opacity: 1; }
+}
+
+.success-title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.success-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  max-width: 320px;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Share QR Code Modal Specifics */
+.share-modal {
+  max-width: 520px !important;
+}
+
+.share-modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.share-intro-text {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.participants-share-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.share-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-surface-raised);
+  border-radius: 16px;
+  border: 1px solid var(--border-default);
+  gap: 1rem;
+}
+
+@media (max-width: 500px) {
+  .share-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .share-participant-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.share-participant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.share-participant-name {
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+}
+
+.share-participant-channel {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.share-participant-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.share-small-btn {
+  padding: 8px 16px !important;
+  font-size: var(--text-xs) !important;
+  min-height: 36px !important;
+}
+
+.whatsapp-btn-share {
+  background: #25d366 !important;
+  color: #fff !important;
+}
+
+.whatsapp-btn-share:hover {
+  opacity: 0.9;
+}
+
+.success-page-error {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
