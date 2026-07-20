@@ -2,9 +2,9 @@
   <img src="./src/assets/logo.png" alt="Enlaço Logo" width="128" height="128" style="border-radius: 28px; box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);" />
 </p>
 
-# Enlaço — Constrained Secret Santa Coordinator (SPA)
+# Enlaço — Organizador de Amigo Secreto Descentralizado (SPA)
 
-> A privacy-focused, zero-login Progressive Web App (PWA) with client-side drawing constraints, organizer blind mode, and offline QR-code sharing.
+> Um Progressive Web App (PWA) focado em privacidade, sem necessidade de login, com restrições de sorteio no lado do cliente, modo cego para o organizador e compartilhamento offline de códigos QR.
 
 <p align="center">
   <a href="https://github.com/KalyelNLaurindo/Enlaco/actions/workflows/ci.yml">
@@ -25,149 +25,158 @@
   <a href="https://zod.dev/">
     <img src="https://img.shields.io/badge/Zod-4.4-3E67B1?logo=zod&logoColor=white" alt="Zod" />
   </a>
+  <a href="https://www.npmjs.com/package/qrcode">
+    <img src="https://img.shields.io/badge/QRCode-1.5-blueviolet" alt="QRCode" />
+  </a>
+  <a href="https://vitejs.dev/">
+    <img src="https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white" alt="Vite" />
+  </a>
+  <a href="https://vite-pwa-org.netlify.app/">
+    <img src="https://img.shields.io/badge/PWA-Ready-orange?logo=pwa&logoColor=white" alt="PWA" />
+  </a>
+  <a href="https://vitest.dev/">
+    <img src="https://img.shields.io/badge/Vitest-1.6-729B1B?logo=vitest&logoColor=white" alt="Vitest" />
+  </a>
 </p>
 
 <p align="center">
-  <b>Language / Idioma / Langue / Sprache / Язык</b><br>
-  <a href="#-english">🇺🇸 English</a> | 
-  <a href="#-português">🇧🇷 Português</a> | 
-  <a href="#-español">🇪🇸 Español</a> | 
-  <a href="#-français">🇫🇷 Français</a> | 
-  <a href="#-deutsch">🇩🇪 Deutsch</a> | 
-  <a href="#-русский">🇷🇺 Русский</a>
+  <b>Outros Idiomas / Other Languages</b><br>
+  <a href="./README.en.md">🇺🇸 English</a> | 
+  <a href="./README.es.md">🇪🇸 Español</a> | 
+  <a href="./README.fr.md">🇫🇷 Français</a> | 
+  <a href="./README.de.md">🇩🇪 Deutsch</a> | 
+  <a href="./README.ru.md">🇷🇺 Русский</a>
 </p>
 
 ---
 
-# 🇺🇸 English
+## 🎯 Visão Geral do Projeto
 
-## 🎯 Project Overview
-**Enlaço** is a modern, responsive, mobile-first Single Page Application (SPA) designed to orchestrate Secret Santa (amigo secreto) gift exchanges without requiring servers, database persistence, user accounts, or authorization. The engine runs entirely in the user's browser, utilizing a constrained draw algorithm to resolve match exclusions. It generates offline-sharable QR codes and encrypted token-based URLs that let participants safely reveal their recipient.
+**Enlaço** é uma Single Page Application (SPA) moderna, responsiva e focada em dispositivos móveis, projetada para orquestrar sorteios de Amigo Secreto sem exigir servidores, persistência de banco de dados, contas de usuário ou autorizações de qualquer tipo.
 
-## 🚀 Key Features
-* **Organizer Blind Mode:** The coordinator can set up and participate without spoiling their own surprise. Matches are never displayed to the coordinator's session.
-* **Smartphone-Centric UI Transitions:** Presentation sidebars collapse smoothly, and the virtual phone mockup slides into the center viewport.
-* **Advanced Drawing Constraints:** Set up bidirectional exclusion rules (e.g., prevent spouses from drawing each other).
-* **Multi-Channel Distribution:** Share results individually via direct WhatsApp links, recovery emails, or by downloading/sharing an offline custom QR Code voucher image.
-* **100% Offline-Capable (PWA):** Once loaded, the application operates completely offline.
-
-## ⚙️ Developer Guide
-```bash
-npm install     # Install dependencies
-npm run dev     # Run Vite dev server
-npm run build   # Build production bundle
-npm run test -- run # Run tests
-```
+O motor do sorteio roda inteiramente no navegador do usuário, utilizando um algoritmo de busca com retrocesso (backtracking) para resolver restrições e exclusões. Ele gera códigos QR compartilháveis offline e URLs criptografadas baseadas em tokens para que os participantes revelem com segurança seus respectivos destinatários, sem expor os pares a ninguém (nem mesmo ao organizador).
 
 ---
-
-# 🇧🇷 Português
-
-## 🎯 Visão Geral do Projeto
-**Enlaço** é uma Single Page Application (SPA) moderna, responsiva e focada em dispositivos móveis, projetada para orquestrar sorteios de Amigo Secreto sem exigir servidores, persistência de banco de dados, contas de usuário ou autorização. O motor roda inteiramente no navegador do usuário, utilizando um algoritmo de sorteio restrito para resolver exclusões de combinações. Ele gera códigos QR compartilháveis offline e URLs criptografadas baseadas em tokens para que os participantes revelem com segurança seus respectivos destinatários.
 
 ## 🚀 Recursos Principais
-* **Modo Cego do Organizador:** O coordenador pode configurar e participar do sorteio sem estragar sua própria surpresa. Os resultados nunca são exibidos na sessão do organizador.
-* **Transições de Interface Focadas em Smartphone:** As barras laterais de apresentação colapsam suavemente, e o modelo virtual do telefone desliza para o centro da tela.
-* **Restrições Avançadas de Sorteio:** Defina regras de exclusão bidirecionais (ex: evitar que casais tirem um ao outro).
-* **Distribuição Multicanal:** Compartilhe resultados individualmente via links diretos do WhatsApp, e-mails de recuperação ou baixando/compartilhando uma imagem personalizada de cupom de QR Code offline.
-* **100% Capaz de Operar Offline (PWA):** Uma vez carregado, o aplicativo funciona inteiramente sem conexão de internet.
 
-## ⚙️ Guia do Desenvolvedor
-```bash
-npm install     # Instalar dependências
-npm run dev     # Executar servidor de desenvolvimento do Vite
-npm run build   # Gerar build de produção
-npm run test -- run # Executar testes
+* **Modo Cego do Organizador:** O coordenador pode configurar e participar do sorteio sem estragar sua própria surpresa. Os pares gerados são encriptados e nunca ficam visíveis na sessão do organizador.
+* **Transições de Interface para Smartphones:** As seções de apresentação lateral colapsam suavemente no desktop, centralizando o mockup interativo de smartphone para foco total na experiência de uso.
+* **Restrições Avançadas de Sorteio:** Defina regras de exclusão bidirecionais (ex: evitar que cônjuges ou familiares próximos tirem uns aos outros).
+* **Distribuição Multicanal:** Compartilhe resultados individualmente via links de WhatsApp pré-formatados, e-mails de recuperação ou baixando cupons contendo o QR Code offline personalizado.
+* **100% Offline (PWA):** Após carregar a página pela primeira vez, toda a configuração, sorteio e exportação de cupons funcionam sem qualquer acesso à internet.
+
+---
+
+## 🛠️ Stack Tecnológica & Dependências
+
+* **React (v18.3.1) & React-DOM (v18.3.1):** Biblioteca de componentes reativos e renderização virtual.
+* **TypeScript (v5.6.2):** Tipagem estática e modelagem de domínio robusta.
+* **React Router DOM (v7.18.1):** Roteador SPA local utilizando `HashRouter` para compatibilidade total com o GitHub Pages.
+* **Zustand (v5.0.14):** Armazenamento de estado para rascunhos, participantes e regras locais persistidos no `localStorage`.
+* **Zod (v4.4.3):** Validador de esquemas para validação de dados em tempo de execução.
+* **qrcode (v1.5.4):** Geração dinâmica de QR Codes desenhados em canvas 2D para download em PNG.
+* **Vite (v5.4.10) & Vite Plugin PWA (v1.3.0):** Compilador de assets e empacotador de Progressive Web App.
+* **Vitest (v1.6.0) & @testing-library/react (v16.3.2):** Ferramentas de testes para suporte à metodologia TDD.
+
+---
+
+## 🧭 Estrutura de Diretórios
+
+```
+src/
+├── assets/                  # Logos, ícones e assets de marca da aplicação
+├── components/              # Componentes globais compartilhados (ex: seletor de idioma)
+├── domain/                  # Lógica de domínio pura
+│   ├── services/            # Serviços puramente lógicos (criptografia, sorteador, i18n)
+│   └── types/               # Contratos e tipos do TypeScript
+├── features/                # Fluxos de negócios autossuficientes
+│   ├── dashboard/           # Painel de controle do organizador (histórico, exportação de auditoria)
+│   ├── landing/             # Tela inicial e contêiner da transição mobile
+│   ├── reveal/              # Tela de revelação do participante
+│   └── wizard/              # Passos de criação (detalhes, participantes, exclusões, revisão)
+│       └── components/      # Componentes internos dos passos e tela de sucesso
+├── test/                    # Configurações globais de testes unitários
+├── App.tsx                  # Ponto de entrada de rotas com HashRouter
+└── main.tsx                 # Inicialização da aplicação
 ```
 
 ---
 
-# 🇪🇸 Español
+## 📖 Guia de Uso: Como Funciona
 
-## 🎯 Descripción General del Proyecto
-**Enlaço** es una Aplicación de Página Única (SPA) moderna, receptiva y orientada a dispositivos móviles, diseñada para organizar intercambios de Amigo Invisible sin necesidad de servidores, persistencia de bases de datos, cuentas de usuario o autorización. El motor se ejecuta completamente en el navegador del usuario, utilizando un algoritmo de sorteo restringido para resolver las exclusiones de emparejamiento. Genera códigos QR compartibles fuera de línea y URLs encriptadas basadas en tokens para que los participantes revelen de manera segura a quién deben regalar.
+### 1. Detalhes do Evento
+Defina o nome do evento, orçamento médio recomendado, data e descrição. Selecione se deseja ativar o **Modo Cego** e inclua um e-mail de recuperação para rascunhos.
 
-## 🚀 Características Clave
-* **Modo Ciego del Organizador:** El coordinador puede configurar y participar en el sorteo sin arruinar su propia sorpresa. Las combinaciones nunca se muestran en la sesión del coordinador.
-* **Transiciones de IU Centradas en Teléfonos Inteligentes:** Las barras laterales de presentación se contraen suavemente y la maqueta virtual del teléfono se desliza hacia el centro de la pantalla.
-* **Restricciones de Sorteo Avanzadas:** Configure reglas de exclusión bidireccionales (por ejemplo, evitar que parejas se sorteen entre sí).
-* **Distribución Multicanal:** Comparta los resultados individualmente mediante enlaces directos de WhatsApp, correos electrónicos de recuperación o descargando/compartiendo una imagen de cupón con código QR personalizada fuera de línea.
-* **100% Capaz de Funcionar Sin Conexión (PWA):** Una vez cargada, la aplicación funciona completamente fuera de línea.
+### 2. Cadastro de Participantes & Canais
+Adicione o nome de cada participante e a forma de entrega de sua revelação:
+* **Link de WhatsApp:** Abre um link com mensagem pronta.
+* **E-mail de Recuperação:** Facilita o envio das credenciais.
+* **QR / Presencial:** Gera um QR Code diretamente na tela para ser escaneado na hora.
 
-## ⚙️ Guía del Desarrollador
+### 3. Configuração de Exclusões
+Crie restrições para o sorteio. Por exemplo, se "Alice" e "Bob" formam um casal, crie uma regra de exclusão para que não possam se sortear mutualmente. O algoritmo trata essas restrições automaticamente.
+
+### 4. Revisão e Sorteio
+Valide os dados do grupo e clique em **"Sortear"**. Uma animação simula o embaralhamento enquanto gera tokens criptográficos seguros e individuais para cada participante.
+
+### 5. Compartilhar Resultados
+Na tela final de sucesso, clique em **"Compartilhar QR Codes"** para:
+* Utilizar o link do WhatsApp.
+* Baixar um cupom em imagem PNG com a logo do evento, nome do destinatário e QR Code para envio offline.
+
+### 6. Revelação (Tap-to-Reveal)
+Quando o participante abrir o link ou escanear o QR Code correspondente:
+1. Ele será levado a uma página contendo um envelope digital de presente.
+2. Ao clicar, o envelope se abre com efeitos visuais.
+3. O token da URL é decodificado localmente no navegador dele, revelando quem ele tirou no sorteio.
+
+---
+
+## ⚙️ Guia do Desenvolvedor (Instalação & Execução)
+
+### Desenvolvimento Local
+Para iniciar o servidor de desenvolvimento com recarregamento em tempo real (HMR):
 ```bash
-npm install     # Instalar dependencias
-npm run dev     # Ejecutar servidor de desarrollo de Vite
-npm run build   # Compilar para producción
-npm run test -- run # Ejecutar pruebas
+# Instalar dependências do npm
+npm install
+
+# Iniciar servidor local Vite
+npm run dev
+```
+Abra `http://localhost:5173/` no navegador.
+
+### Testes Unitários (TDD)
+Para rodar toda a suíte de testes do projeto:
+```bash
+# Executa os testes no modo CI
+npm run test -- run
+```
+
+### Validações de Sintaxe & Tipagem
+```bash
+# Verificação estática do TypeScript
+npx tsc --project tsconfig.app.json --noEmit
+
+# Análise de padrões com ESLint
+npm run lint
+```
+
+### Build de Produção
+```bash
+# Gera o build final otimizado na pasta dist/
+npm run build
+
+# Pré-visualiza localmente o build estático
+npm run preview
 ```
 
 ---
 
-# 🇫🇷 Français
+## 🛡️ Licença
 
-## 🎯 Aperçu do Projet
-**Enlaço** est une application web monopage (SPA) moderne, réactive et conçue en priorité para les mobiles, créée pour organiser des échanges de Secret Santa sans nécessiter de serveurs, de bases de données, de comptes d'utilisateurs ou d'autorisation. Le moteur s'exécute entièrement dans le navigateur de l'utilisateur, utilisant un algorithme de tirage avec contraintes pour gérer les exclusions. Il génère des codes QR partageables hors ligne et des URL chiffrées basées sur des jetons pour permettre aux participants de révéler leur destinataire en toute sécurité.
-
-## 🚀 Fonctionnalités Clés
-* **Mode Aveugle de l'Organisateur:** Le coordinateur peut configurer et participer au tirage sans gâcher sa propre surprise. Les correspondances ne sont jamais affichées dans la session de l'organisateur.
-* **Transitions d'interface centrées sur le smartphone:** Les barres latérales de présentation se replient en douceur et le modèle virtuel de téléphone glisse au centre de l'écran.
-* **Contraintes de tirage avancées:** Configurez des règles d'exclusion bidirectionnelles (par exemple, empêcher les conjoints de se tirer au sort mutuellement).
-* **Distribution multicanal:** Partagez les résultats individuellement via des liens directs WhatsApp, des e-mails de récupération ou en téléchargeant/partageant une image de coupon QR Code personnalisée hors ligne.
-* **100% opérationnel hors ligne (PWA):** Une fois chargée, l'application fonctionne entièrement sans connexion Internet.
-
-## ⚙️ Guide du Développeur
-```bash
-npm install     # Installer les dépendances
-npm run dev     # Lancer le serveur de développement Vite
-npm run build   # Compiler pour la production
-npm run test -- run # Exécuter les tests
-```
-
----
-
-# 🇩🇪 Deutsch
-
-## 🎯 Projektübersicht
-**Enlaço** ist eine moderne, responsive, mobile-first Single-Page-Anwendung (SPA) zur Organisation von Wichtel-Geschenkaustauschen (Secret Santa) ohne Server, Datenbanken, Benutzerkonten oder Autorisierung. Die Engine läuft vollständig im Browser des Benutzers und verwendet einen eingeschränkten Ziehungsalgorithmus, um Übereinstimmungsausschlüsse aufzulösen. Sie generiert offline teilbare QR-Codes und verschlüsselte, tokenbasierte URLs, mit denen Teilnehmer ihren Empfänger sicher enthüllen können.
-
-## 🚀 Hauptmerkmale
-* **Blindmodus für Organisatoren:** Der Koordinator kann die Ziehung einrichten und daran teilnehmen, ohne seine eigene Überraschung zu verderben. Die Zuordnungen werden in der Sitzung des Koordinators niemals angezeigt.
-* **Smartphone-zentrierte UI-Übergänge:** Die Präsentations-Sidebars klappen sanft zusammen, und das virtuelle Telefonmodell gleitet in die Mitte des Bildschirms.
-* **Erweiterte Ziehungsbeschränkungen:** Richten Sie bidirektionale Ausschlussregeln ein (z. B. verhindern, dass Ehepartner sich gegenseitig ziehen).
-* **Multi-Kanal-Verteilung:** Teilen Sie Ergebnisse einzeln über direkte WhatsApp-Links, Wiederherstellungs-E-Mails oder durch Herunterladen/Teilen eines offline anpassbaren QR-Code-Couponbilds.
-* **100% Offline-fähig (PWA):** Nach dem Laden funktioniert die Anwendung vollständig offline.
-
-## ⚙️ Entwicklerhandbuch
-```bash
-npm install     # Abhängigkeiten installieren
-npm run dev     # Vite-Entwicklungsserver starten
-npm run build   # Produktions-Build erstellen
-npm run test -- run # Tests ausführen
-```
-
----
-
-# 🇷🇺 Русский
-
-## 🎯 Обзор проекта
-**Enlaço** — это современное, адаптивное и ориентированное на мобильные устройства одностраничное приложение (SPA) для организации обмена подарками «Тайный Санта» (Secret Santa) без необходимости использования серверов, баз данных, учетных записей или авторизации. Движок работает полностью в браузере пользователя, используя алгоритм жеребьевки с ограничениями для исключения нежелательных совпадений. Он генерирует QR-коды, которыми можно делиться в автономном режиме, и зашифрованные URL-адреса на основе токенов для безопасного раскрытия получателя.
-
-## 🚀 Ключевые особенности
-* **Слепой режим для организатора:** Координатор может настроить жеребьевку и участвовать в ней, не зная результатов своего получателя. Совпадения никогда не отображаются в сессии координатора.
-* **Адаптивные переходы интерфейса под смартфоны:** Боковые панели презентации плавно сворачиваются, а виртуальный макет телефона перемещается в центр экрана.
-* **Расширенные ограничения жеребьевки:** Настройте двунаправленные правила исключения (например, запретить супругам выбирать друг друга).
-* **Многоканальное распределение:** Делитесь результатами индивидуально через прямые ссылки WhatsApp, резервную почту или скачивая/отправляя изображение купона с QR-кодом в автономном режиме.
-* **100% автономная работа (PWA):** После загрузки приложение работает полностью без подключения к Интернету.
-
-## ⚙️ Руководство разработчика
-```bash
-npm install     # Установить зависимости
-npm run dev     # Запустить сервер разработки Vite
-npm run build   # Собрать проект для продакшена
-npm run test -- run # Запустить тесты
-```
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para obter detalhes.
 
 ***
-**Autoria/Assinatura:** Kalyel N. Laurindo / Software Engineer
+
+**Autor:** Kalyel Nunes Laurindo / Software Engineer
