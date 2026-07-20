@@ -1,119 +1,152 @@
-# 🎁 Enlaço — Decoupled Constrained Gift-Exchange Draw Engine (Frontend)
+<p align="center">
+  <img src="./src/assets/logo.png" alt="Enlaço Logo" width="128" height="128" style="border-radius: 28px; box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);" />
+</p>
 
-[![Frontend CI/CD](https://github.com/kalyel/enlaco-frontend/actions/workflows/ci.yml/badge.svg)](https://github.com/kalyel/enlaco-frontend/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB.svg)](https://react.dev/)
+# Enlaço — Constrained Secret Santa Coordinator (SPA)
 
-Enlaço is a highly polished, mobile-first, zero-login Secret Santa (amigo secreto) drawing coordinator. This repository contains the Frontend Single Page Application (SPA), built using React, Vite, TypeScript, and Zustand. It implements a strict, constraint-based drawing configuration wizard and a highly secure, private "Tap-to-Reveal" participant landing page.
+> A privacy-focused, zero-login Progressive Web App (PWA) with client-side drawing constraints, organizer blind mode, and offline QR-code sharing.
 
 ---
 
-## 🎯 Business Value & Objectives
+## 🎯 Project Overview
 
-- **The Organizer Surprise (Blind Mode):** Standard gift-exchange managers force the coordinator to sacrifice their surprise or manually write paper slips. Enlaço resolves this through **Organizer Blind Mode**, allowing the coordinator to participate in the draw without ever exposing the matches to their own browser session or administration logs.
-- **Privacy First (No Accounts):** No login, SSO, or emails are required for participants. Secure URL tokens (`resultToken`) serve as the sole access-control method.
-- **Decoupled Architecture:** Drawing generation and result viewing are strictly isolated surfaces to prevent accidental peek leaks.
+**Enlaço** is a modern, responsive, mobile-first Single Page Application (SPA) designed to orchestrate Secret Santa (amigo secreto) gift exchanges without requiring servers, database persistence, user accounts, or authorization. 
+
+The engine runs entirely in the user's browser, utilizing a constrained draw algorithm to resolve match exclusions. It generates offline-sharable QR codes and encrypted token-based URLs that let participants safely reveal their recipient without exposing matches to anyone else—including the organizer.
+
+---
+
+## ✨ Features
+
+* **Organizer Blind Mode:** The coordinator can set up and participate in the draw without spoiling their own surprise. Results are generated client-side and matches are never displayed to the coordinator's session.
+* **Smartphone-Centric UI Transitions:** Landing and creation workflows are unified. When starting a draw, the desktop presentation sidebars collapse smoothly (`opacity` and `max-width` transitions), and the virtual phone mockup slides into the center viewport.
+* **Advanced Drawing Constraints:** Set up bidirectional exclusion rules (e.g., prevent spouses or immediate family members from drawing each other).
+* **Multi-Channel Distribution:** Share results individually via direct WhatsApp links, recovery emails, or by downloading/sharing an offline custom QR Code voucher image.
+* **100% Offline-Capable (PWA):** Once loaded, the application operates completely offline. You can configure the draw, add participants, and generate matching outputs in airplane mode.
+* **Bilingual Emoji Switcher:** Minimalist switcher rendering native country flag emojis (`🇧🇷`, `🇺🇸`, `🇪🇸`, `🇫🇷`, `🇩🇪`, `🇷🇺`) supporting Portuguese, English, Spanish, French, German, and Russian.
+
+---
+
+## 🛠️ Technology Stack
+
+Enlaço is built using a clean, modern frontend architecture with minimal overhead:
+
+### Core Framework & State
+* **React 18.3 & TypeScript 5.6:** Strict type safety and functional component architecture.
+* **Zustand 5.0:** Lightweight, custom-middleware-backed state management providing local storage persistence for draw state and history.
+* **React Router Dom 7.1:** Client-side SPA routing hub managing transitions between creation, dashboard, success, and reveal surfaces.
+
+### Drawing & Sharing Utilities
+* **qrcode (npm):** Client-side QR code generator used to draw participant-specific match tokens onto offline `<canvas>` overlays. Allows downloading dynamic PNG vouchers.
+* **Zod 4.4:** Declarative runtime schemas for validating participant entries, configuration limits, and imported draw JSON backups.
+
+### Tooling & Build System
+* **Vite 5.4:** Lightning-fast HMR and optimized bundler.
+* **vite-plugin-pwa 1.3:** Seamless PWA registration, asset precaching, and service worker deployment for full offline capabilities.
+* **Vitest 1.6 & JSDOM:** Fast, isolated testing framework running unit tests on domain services, store state, and UI components.
+* **Google Fonts (Poppins & Inter):** Loaded via CSS imports for clean geometric headers (**Poppins**) and highly readable body copy (**Inter**).
 
 ---
 
 ## 🧭 Repository Structure
 
-This project follows an atomic, feature-based directory structure:
-
 ```
 src/
-├── domain/
-│   └── types/
-│       └── index.ts                 # Pure business entities and contracts
-├── validation/
-│   └── schemas/
-│       ├── draw.ts                  # Zod validation schemas
-│       └── draw.test.ts             # Validation unit test cases
-├── features/
-│   ├── wizard/                      # Sorteio Creation Wizard Feature
-│   │   ├── components/              # Step 0 to 3 UI Step Components
-│   │   ├── hooks/                   # useWizardAutosave hook (Debounced local state)
-│   │   ├── store/                   # Zustand local storage persistent store
-│   │   └── WizardPage.tsx           # Page orchestrator & progress stepper
-│   └── reveal/                      # Tap-to-Reveal Participant Landing Feature
-│       ├── components/              # RevealCard UI Component
-│       └── RevealPage.tsx           # Chrome-free centered layout wrapper
-├── test/
-│   └── setup.ts                     # Vitest global testing setup
-├── App.tsx                          # BrowserRouter app shell routing
-├── main.tsx                         # DOM entrypoint
-└── index.css                        # Design System tokens & base CSS rules
+├── assets/                  # High-quality brand assets, icons, and logos
+├── components/              # Globally shared components (e.g., LanguageSwitcher flag controls)
+├── domain/                  # Core domain logic
+│   ├── services/            # Pure services (match generator, token crypto, i18n dictionary)
+│   └── types/               # TypeScript domain model contracts
+├── features/                # Self-contained business flows
+│   ├── dashboard/           # Organizer administrative board (view history, export audit CSV)
+│   ├── landing/             # Main landing shell & smartphone slide transition container
+│   ├── reveal/              # Participant Tap-to-Reveal card page
+│   └── wizard/              # Sorteio creation steps (details, participants, exclusions, review)
+│       └── components/      # Creation steps subcomponents & success panel
+├── test/                    # Global unit test suite configuration
+├── App.tsx                  # BrowserRouter routing hub
+├── index.css                # Visual theme tokens (HSL colors, glassmorphism templates)
+└── main.tsx                 # Application mounting entrypoint
 ```
 
 ---
 
-## 🛠️ Visual DNA & Design System
+## 📖 User Guide: How it Works
 
-The application strictly implements the visual rules defined in the project design brief:
+### 1. Set Event Details
+Enter your event's name, description, recommended budget, and date. You can choose to enable **Blind Mode** (so the organizer doesn't know who they drew) and provide a recovery email.
 
-- **Typography:** Pinned to **Quicksand** (Google Fonts) for display/headers to convey a friendly, rounded tone, and **Nunito** for high legibility body copy.
-- **Color Palette (Dark Default):**
-  - Base Background: `#0F0F12`
-  - Surface Card: `#18181D`
-  - Accent Color: `#FF2E93` (Pill buttons, active states, key highlight text)
-  - Success Feedback: `#2FE6B0`
-  - Error/Validation: `#FF5C5C`
-- **Shape & Touch Targets:** Flat design with border-only separation (`#2C2C34`), generous `20px` card borders, and touch targets constrained to a minimum of `44x44px` on all buttons for mobile accessibility.
+### 2. Add Participants & Delivery Channels
+Input the name of each participant and their preferred sharing channel. You can select:
+* **WhatsApp Link:** Automatically pre-fills a message to send directly.
+* **Recovery Email:** Pre-fills mail links.
+* **QR / Presential:** Generates a QR Code on the organizer's device that participants can scan in person.
 
----
+### 3. Configure Exclusions
+Set up exclusion rules. For example, if "Alice" and "Bob" are a couple, add a rule preventing Alice from drawing Bob and vice-versa. The engine's backtracking algorithm handles the constraints client-side.
 
-## ⚙️ Quick Start (Developer Setup)
+### 4. Review & Draw Animation
+Review your group settings. Click **"Sortear"** to run the matching algorithm. An animated shuffling overlay will simulate the draw, generating encrypted tokens for each match.
 
-### Prerequisites
-- **Node.js:** v20.19.0 or higher
-- **npm:** 10.2.4 or higher
+### 5. Sharing the Match
+On the success page, click **"Compartilhar QR Codes"**. You can:
+* Click **WhatsApp** to open a direct chat.
+* Click **Download PNG** to save a coupon voucher showing the event logo, the participant name, and their personalized QR Code to share via any messenger app offline.
 
-### Local Installation
-1. Clone this repository to your workstation.
-2. Install the production and development dependencies:
-   ```bash
-   npm install
-   ```
-
-### Command Reference
-
-| Action | Command | Description |
-|---|---|---|
-| **Development** | `npm run dev` | Spins up local Vite development server. |
-| **Linting** | `npm run lint` | Runs ESLint check across all TSX/TS files. |
-| **Typecheck** | `npx tsc --project tsconfig.app.json --noEmit` | Validates TypeScript strict compiler rules. |
-| **Testing** | `npm run test` | Launches Vitest suite in interactive watch mode. |
-| **Test Run** | `npm run test -- run` | Runs full Vitest suite once (used in CI/CD pipeline). |
-| **Build** | `npm run build` | Compiles source files into production-ready `dist/` bundle. |
-| **Preview** | `npm run preview` | Serves compiled assets locally for integration checks. |
+### 6. Tap-to-Reveal
+When a participant scans their QR Code or opens their reveal link:
+1. They are taken to a clean, chrome-free page showing a virtual gift card.
+2. They click the card to animate the reveal.
+3. The page reads the encrypted URL token, decrypts it client-side, and reveals the name of their recipient.
 
 ---
 
-## 🧪 Automated Testing & Quality Checks
+## ⚙️ Developer Guide (Setup & Verification)
 
-The repository relies on strict TDD checks. Before pushing code or creating a PR, verify the type correctness and test suite status:
-
+### Local Development
+To launch the hot-reloading development server locally:
 ```bash
-# 1. Type correctness check
+# Install dependencies
+npm install
+
+# Run Vite dev server
+npm run dev
+```
+Open `http://localhost:5173/` in your browser.
+
+### Test execution (TDD Verification)
+This project enforces strict test coverage on domain functions, store transitions, and i18n translations. To run the full test suite:
+```bash
+# Run Vitest suite once (CI mode)
+npm run test -- run
+```
+
+### Static Typechecking & Linting
+Validate strict TypeScript compiler guidelines and ESLint configurations:
+```bash
+# Strict TypeScript check
 npx tsc --project tsconfig.app.json --noEmit
 
-# 2. Run all 70 test suites
-npm run test -- run --reporter=verbose
+# Linting check
+npm run lint
 ```
 
----
+### Production Build
+Generate optimized static files for deployment:
+```bash
+# Build production bundle
+npm run build
 
-## 🌐 PWA & Service Worker Support
-
-This app acts as an installable **Progressive Web App (PWA)** using `vite-plugin-pwa`. It includes offline caching capabilities and registers service workers automatically when deployed to production.
+# Preview build locally
+npm run preview
+```
 
 ---
 
 ## 🛡️ License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
----
+***
 
-**Autoria/Assinatura:** Kalyel N. Laurindo / Software Engineer
+**Author:** Kalyel Nunes Laurindo / Software Engineer
