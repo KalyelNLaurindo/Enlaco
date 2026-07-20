@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { LandingPage } from './features/landing/LandingPage';
 import { SuccessPage } from './features/wizard/components/SuccessPage';
 import { RevealPage } from './features/reveal/RevealPage';
@@ -42,12 +42,12 @@ function NotFound() {
         404
       </p>
       <p>Página não encontrada.</p>
-      <a
-        href="/criar"
+      <Link
+        to="/criar"
         style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}
       >
         Criar um sorteio →
-      </a>
+      </Link>
     </div>
   );
 }

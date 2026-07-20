@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode';
-import logoImg from '../../../assets/logo.png';
 import { useTranslation } from '../../../domain/services/i18nService';
 import type { Draw } from '../../../domain/types';
 import './SuccessPage.css';
@@ -12,7 +11,6 @@ export function SuccessPage() {
   const navigate = useNavigate();
   const [draw, setDraw] = useState<Draw | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (!drawId) return;
