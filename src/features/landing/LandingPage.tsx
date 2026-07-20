@@ -202,35 +202,35 @@ export function LandingPage() {
             <img src={logoImg} alt="Enlaço Logo" className="brand-logo-img" />
             <h1 className="brand-title">Enlaço</h1>
           </div>
-          <p className="brand-slogan">LAÇOS QUE CONECTAM HISTÓRIAS E SURPRESAS.</p>
+          <p className="brand-slogan">{t('slogan')}</p>
 
           <div className="features-grid">
             <div className="feature-item">
               <span className="feature-icon">🛡️</span>
               <div>
-                <h3 className="feature-title">NÃO TRANSPARENTE</h3>
-                <p className="feature-desc">Sorteio 100% secreto.</p>
+                <h3 className="feature-title">{t('feature1Title')}</h3>
+                <p className="feature-desc">{t('feature1Desc')}</p>
               </div>
             </div>
             <div className="feature-item">
               <span className="feature-icon">⚡</span>
               <div>
-                <h3 className="feature-title">RÁPIDO E LEVE</h3>
-                <p className="feature-desc">Funciona online e offline.</p>
+                <h3 className="feature-title">{t('feature2Title')}</h3>
+                <p className="feature-desc">{t('feature2Desc')}</p>
               </div>
             </div>
             <div className="feature-item">
               <span className="feature-icon">✈️</span>
               <div>
-                <h3 className="feature-title">ENVIO DIRETO</h3>
-                <p className="feature-desc">Email, WhatsApp, QR Code e mais.</p>
+                <h3 className="feature-title">{t('feature3Title')}</h3>
+                <p className="feature-desc">{t('feature3Desc')}</p>
               </div>
             </div>
             <div className="feature-item">
               <span className="feature-icon">👥</span>
               <div>
-                <h3 className="feature-title">FEITO PARA GRUPOS</h3>
-                <p className="feature-desc">Eventos de empresa, família e amigos.</p>
+                <h3 className="feature-title">{t('feature4Title')}</h3>
+                <p className="feature-desc">{t('feature4Desc')}</p>
               </div>
             </div>
           </div>
